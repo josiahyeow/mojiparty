@@ -1,7 +1,7 @@
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
-import { Box, H3, Label, Select, Input } from '../../Styled/Styled'
+import { Box, H3, Label, Select } from '../../Styled/Styled'
 import socket from '../../../utils/socket'
 import emoji from '../../../utils/emoji'
 import { RoomContext, RoomContextProps } from '../../providers/RoomProvider'
@@ -58,10 +58,14 @@ const CategoryName = styled.span`
 
 const ONLY_HOST_MESSAGE = 'Only the host can change the game settings'
 
+const MAX_PLAYERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+const MAX_PLAYERS_EXPERIMENTAL = [24, 32, 64, 128]
+
 const GameSettings = () => {
   const { room, settings, player, players } = useContext(
     RoomContext
   ) as RoomContextProps
+  const [maxPlayers, setMaxPlayers] = useState(6)
   const scoreLimit = settings?.scoreLimit || 0
   const selectedCategories: Categories = settings?.selectedCategories || {}
   const rounds = settings?.rounds || 0
@@ -163,6 +167,29 @@ const GameSettings = () => {
       <Box>
         <Container>
           <H3>Game Settings</H3>
+          <Label htmlFor="players-input">Max players</Label>
+          <Select
+            id="mode-input"
+            value={maxPlayers}
+            onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
+            disabled={!isHost}
+            title={!isHost ? ONLY_HOST_MESSAGE : ''}
+          >
+            <optgroup label="Party">
+              {MAX_PLAYERS.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Mega Party (Experimental)">
+              {MAX_PLAYERS_EXPERIMENTAL.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </optgroup>
+          </Select>
           <Label htmlFor="mode-input">Game mode</Label>
           {/* <Select
             id="mode-input"
