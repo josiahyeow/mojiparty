@@ -20,6 +20,7 @@ async function fetchEmojis() {
 
     const SHEET_IDS = {
       general: 1100919438,
+      foods: 1919755213,
       movies: 1448404852,
       tv: 1066868128,
       songs: 109594337,
@@ -41,10 +42,12 @@ async function fetchEmojis() {
     const koreaboo = parseRows(
       await doc.sheetsById[SHEET_IDS.koreaboo].getRows()
     );
+    const foods = parseRows(await doc.sheetsById[SHEET_IDS.foods].getRows());
 
     const emojiSets = {
       songs,
       general,
+      foods,
       movies,
       tv,
       places,
@@ -61,7 +64,8 @@ async function fetchEmojis() {
         places.length +
         brands.length +
         anime.length +
-        koreaboo.length
+        koreaboo.length +
+        foods.length
       } emoji sets.`
     );
 

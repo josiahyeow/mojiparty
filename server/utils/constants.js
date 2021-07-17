@@ -1,6 +1,7 @@
 const DEFAULT_SCORE_LIMIT = 10;
 const DEFAULT_SELECTED_CATEGORIES = {
   general: { name: "General", icon: "💬", include: true },
+  foods: { name: "Food", icon: "🍽", include: false },
   movies: { name: "Movies", icon: "🍿", include: false },
   tv: { name: "TV Shows", icon: "📺", include: false },
   songs: { name: "Music", icon: "🎵", include: false },
