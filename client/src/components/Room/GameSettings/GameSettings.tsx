@@ -6,6 +6,17 @@ import socket from '../../../utils/socket'
 import emoji from '../../../utils/emoji'
 import { RoomContext, RoomContextProps } from '../../providers/RoomProvider'
 
+type Category = {
+  name: string
+  icon: string
+  include: boolean
+  weight: number
+}
+
+type Categories = {
+  [key: string]: Category
+}
+
 const Container = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -52,7 +63,7 @@ const GameSettings = () => {
     RoomContext
   ) as RoomContextProps
   const scoreLimit = settings?.scoreLimit || 0
-  const selectedCategories = settings?.selectedCategories || []
+  const selectedCategories: Categories = settings?.selectedCategories || {}
   const rounds = settings?.rounds || 0
   const roundTimer = settings?.timer || -1
   const mode = settings?.mode || 'classic'
@@ -207,32 +218,36 @@ const GameSettings = () => {
           )}
           <Label>Categories</Label>
           <CategorySelector>
-            {Object.keys(selectedCategories).map((category) => (
-              <Category key={category}>
-                <CategoryCheckbox
-                  type="checkbox"
-                  name={`${category}-checkbox`}
-                  value={`${category}`}
-                  checked={selectedCategories[category].include}
-                  onChange={(event) => handleUpdateCategory(event.target.value)}
-                  disabled={!isHost}
-                  title={!isHost ? ONLY_HOST_MESSAGE : ''}
-                />
-                <CategoryLabel
-                  htmlFor={`${category}-checkbox`}
-                  onClick={() => isHost && handleUpdateCategory(category)}
-                  disabled={!isHost}
-                  title={!isHost ? ONLY_HOST_MESSAGE : ''}
-                >
-                  <CategoryIcon>
-                    {emoji(selectedCategories[category].icon)}
-                  </CategoryIcon>
-                  <CategoryName>
-                    {selectedCategories[category].name}
-                  </CategoryName>
-                </CategoryLabel>
-              </Category>
-            ))}
+            {Object.entries(selectedCategories)
+              .sort((a, b) => a[1].weight - b[1].weight)
+              .map(([category, value]) => (
+                <Category key={category}>
+                  <CategoryCheckbox
+                    type="checkbox"
+                    name={`${category}-checkbox`}
+                    value={`${category}`}
+                    checked={selectedCategories[category].include}
+                    onChange={(event) =>
+                      handleUpdateCategory(event.target.value)
+                    }
+                    disabled={!isHost}
+                    title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                  />
+                  <CategoryLabel
+                    htmlFor={`${category}-checkbox`}
+                    onClick={() => isHost && handleUpdateCategory(category)}
+                    disabled={!isHost}
+                    title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                  >
+                    <CategoryIcon>
+                      {emoji(selectedCategories[category].icon)}
+                    </CategoryIcon>
+                    <CategoryName>
+                      {selectedCategories[category].name}
+                    </CategoryName>
+                  </CategoryLabel>
+                </Category>
+              ))}
           </CategorySelector>
         </Container>
       </Box>
