@@ -70,8 +70,19 @@ const GameSettings = () => {
   const isHost = players ? players[player?.id]?.host : player?.host
 
   const GAME_MODES = [
-    { name: 'Classic', value: 'classic' },
-    { name: 'New', value: 'skribbl' },
+    {
+      name: 'Classic',
+      value: 'classic',
+      icon: '🕹️',
+      description:
+        'The first to guess the emoji, gets the point! Winner takes it all.',
+    },
+    {
+      name: 'New',
+      value: 'skribbl',
+      icon: '🎮',
+      description: 'The faster you guess, the more points you get!',
+    },
     // { name: 'Custom', value: 'pictionary' },
   ]
   const SCORE_LIMITS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
@@ -153,7 +164,7 @@ const GameSettings = () => {
         <Container>
           <H3>Game Settings</H3>
           <Label htmlFor="mode-input">Game mode</Label>
-          <Select
+          {/* <Select
             id="mode-input"
             value={mode}
             onChange={(e) => updateMode(e.target.value)}
@@ -165,7 +176,30 @@ const GameSettings = () => {
                 {name}
               </option>
             ))}
-          </Select>
+          </Select> */}
+          <CategorySelector>
+            {GAME_MODES.map(({ name, value, icon, description }) => (
+              <Category>
+                <CategoryCheckbox
+                  type="radio"
+                  id={name}
+                  name={name}
+                  value={value}
+                  checked={value === mode}
+                  onChange={() => updateMode(value)}
+                />
+                <CategoryLabel
+                  htmlFor={name}
+                  disabled={!isHost}
+                  title={description}
+                >
+                  <CategoryIcon>{emoji(icon)}</CategoryIcon>
+                  <CategoryName>{name}</CategoryName>
+                </CategoryLabel>
+              </Category>
+            ))}
+          </CategorySelector>
+
           {mode === 'classic' && (
             <>
               <Label htmlFor="scorelimit-input">Score Limit</Label>
