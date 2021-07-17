@@ -56,6 +56,12 @@ const CategoryName = styled.span`
   font-weight: bold;
 `
 
+const ModeSettings = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+`
+
 const ONLY_HOST_MESSAGE = 'Only the host can change the game settings'
 
 const MAX_PLAYERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
@@ -229,7 +235,7 @@ const GameSettings = () => {
 
           {mode === 'classic' && (
             <>
-              <Label htmlFor="scorelimit-input">Score Limit</Label>
+              {/* <Label htmlFor="scorelimit-input">Score Limit</Label> */}
               <Select
                 id="scorelimit-input"
                 value={scoreLimit}
@@ -239,15 +245,15 @@ const GameSettings = () => {
               >
                 {SCORE_LIMITS.map((scoreLimit) => (
                   <option key={scoreLimit} value={scoreLimit}>
-                    {scoreLimit}
+                    {scoreLimit} points to win
                   </option>
                 ))}
               </Select>
             </>
           )}
           {(mode === 'skribbl' || mode === 'pictionary') && (
-            <>
-              <Label htmlFor="rounds-input">Rounds</Label>
+            <ModeSettings>
+              {/* <Label htmlFor="rounds-input">Rounds</Label> */}
               <Select
                 id="rounds-input"
                 value={rounds}
@@ -257,11 +263,11 @@ const GameSettings = () => {
               >
                 {ROUNDS.map((rounds) => (
                   <option key={rounds} value={rounds}>
-                    {rounds}
+                    {rounds} rounds
                   </option>
                 ))}
               </Select>
-              <Label htmlFor="roundTimer-input">Time per round (sec)</Label>
+              {/* <Label htmlFor="roundTimer-input">Time per round (sec)</Label> */}
               <Select
                 id="roundTimer-input"
                 value={roundTimer}
@@ -271,11 +277,11 @@ const GameSettings = () => {
               >
                 {ROUND_TIMERS.map((roundTimer) => (
                   <option key={roundTimer} value={roundTimer}>
-                    {roundTimer === 0 ? 'Unlimited' : roundTimer}
+                    {roundTimer === 0 ? 'Unlimited' : roundTimer} sec each
                   </option>
                 ))}
               </Select>
-            </>
+            </ModeSettings>
           )}
           <Label>Categories</Label>
           <CategorySelector>
