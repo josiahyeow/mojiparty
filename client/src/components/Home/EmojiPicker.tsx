@@ -31,6 +31,16 @@ const EmojiInput = styled.div`
     background-color: #ffffff;
   }
   transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
+  z-index: 1;
+`
+
+const Backdrop = styled.div`
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
 `
 
 const DEFAULT_PLAYER_EMOJIS = [
@@ -89,21 +99,24 @@ const EmojiPicker = ({ playerEmoji, setPlayerEmoji }) => {
         <Emoji>{emoji(playerEmoji)}</Emoji>
       </EmojiInput>
       {selectEmojiOpen && (
-        <Picker
-          title="Pick your emoji"
-          emoji="thinking_face"
-          color={'#000000'}
-          useButton={true}
-          set={'twitter'}
-          onSelect={(emoji) => {
-            setPlayerEmoji(emoji.native)
-            setSelectEmojiOpen(false)
-          }}
-          style={{
-            position: 'absolute',
-            zIndex: '999',
-          }}
-        />
+        <>
+          <Picker
+            title="Pick your emoji"
+            emoji="thinking_face"
+            color={'#000000'}
+            useButton={true}
+            set={'twitter'}
+            onSelect={(emoji) => {
+              setPlayerEmoji(emoji.native)
+              setSelectEmojiOpen(false)
+            }}
+            style={{
+              position: 'absolute',
+              zIndex: '999',
+            }}
+          />
+          <Backdrop onClick={() => setSelectEmojiOpen(false)} />
+        </>
       )}
     </Container>
   )
