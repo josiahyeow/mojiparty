@@ -103,7 +103,7 @@ const EmojiSet = ({ gameEnd }) => {
       drawer = false,
       round,
     },
-    settings: { rounds },
+    settings: { rounds, timer },
   } = useContext(RoomContext) as RoomContextProps
   const [counter, setCounter] = useState(1)
   const [mojiSet, setMojiSet] = useState(currentEmojiSet.emojiSet)
@@ -137,7 +137,7 @@ const EmojiSet = ({ gameEnd }) => {
           noUpdate={isDrawer || hasGuessed}
           guessed={hasGuessed}
         />
-        <Timer />
+        {timer > 0 && <Timer />}
       </TimerHint>
       <SetContainer>
         <Category>
