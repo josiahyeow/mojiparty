@@ -7,6 +7,9 @@ const rooms = require("../actions/rooms");
 router.get("/", async (req, res) => {
   const roomName = req.query.roomName;
   try {
+    if (!roomName) {
+      res.status(400).send({ error: "Missing room name" });
+    }
     const room = (await db.ref("rooms/" + roomName).get()).val();
     rooms.add(room);
     res.status(200).send({ room });
