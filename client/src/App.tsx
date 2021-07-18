@@ -87,11 +87,8 @@ function App() {
   function handleResize() {
     const { width, height } = getWindowDimensions()
     const minHeight = content.current && content.current.scrollHeight
-    console.log('window', 'minHeight', minHeight)
     if (minHeight) {
-      console.log('window', height, minHeight)
       const scale = height < minHeight ? height / minHeight : 1
-      console.log('window', 'scale', scale)
       setScale(scale)
     }
   }
