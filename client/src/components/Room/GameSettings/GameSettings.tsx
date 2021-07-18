@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
 import { Box, H3, Label, Select } from '../../Styled/Styled'
@@ -78,6 +84,10 @@ const GameSettings = () => {
   const roundTimer = settings?.timer || -1
   const mode = settings?.mode || 'classic'
   const isHost = players ? players[player?.id]?.host : player?.host
+
+  useEffect(() => {
+    window.dispatchEvent(new Event('resize'))
+  }, [settings, players])
 
   const GAME_MODES = [
     {

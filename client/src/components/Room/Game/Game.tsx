@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import { Grid, Left, Middle } from '../../Styled/Styled'
 import PlayerList from '../PlayerList/PlayerList'
@@ -20,6 +20,11 @@ const GameOver = styled(Middle)`
 
 const Game = () => {
   const { activeGame } = useContext(RoomContext) as RoomContextProps
+
+  useEffect(() => {
+    window.dispatchEvent(new Event('resize'))
+  }, [])
+
   return (
     <Grid>
       <GameSidebar>
