@@ -133,10 +133,10 @@ const Chat = ({ inGame }) => {
   }, [activeGame?.currentEmojiSet])
 
   const messagesEndRef = useRef<HTMLDivElement>(document.createElement('div'))
-  const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-  }
-  useEffect(scrollToBottom, [messages])
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+  // }
+  // useEffect(scrollToBottom, [messages])
 
   const sendMessage = (event) => {
     event.preventDefault()
