@@ -3,7 +3,9 @@ const { sendRoomUpdate } = require("./update-room");
 
 function roundTimer(roomName, answer, io, nextEmojiSet, updateTimer) {
   try {
-    const time = Rooms.get(roomName).settings.timer;
+    const room = Rooms.get(roomName);
+    const gameOver = room.game?.winners;
+    const time = room.settings.timer;
     if (time < 1) {
       return;
     }
@@ -19,7 +21,7 @@ function roundTimer(roomName, answer, io, nextEmojiSet, updateTimer) {
         nextEmojiSet(roomName, io);
         sendRoomUpdate(io, roomName);
       }
-      if (currentEmojiSet !== answer || !room.game) {
+      if (currentEmojiSet !== answer || !room.game || gameOver) {
         clearInterval(timer);
       } else {
         updateTimer(roomName, timeLeft);
