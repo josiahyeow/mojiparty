@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
+import { escape } from 'html-escaper'
 import EmojiChat from './EmojiChat'
 import emoji from '../../../utils/emoji'
 import { Box, Input, Button } from '../../Styled/Styled'
@@ -188,7 +189,7 @@ const Chat = ({ inGame }) => {
               ) : (
                 <Bubble>
                   <PlayerName>{message.player.name}:</PlayerName>
-                  {emoji(message.text)}
+                  {emoji(escape(message.text))}
                 </Bubble>
               )}
             </Message>

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
+import { escape } from 'html-escaper'
 import { Box, H3 } from '../../Styled/Styled'
 import emoji from '../../../utils/emoji'
 import { RoomContext, RoomContextProps } from '../../providers/RoomProvider'
@@ -167,7 +168,7 @@ const PlayerRow = ({
           : emoji(value.emoji)}
       </Emoji>
       <Name>
-        {value.name}
+        {escape(value.name)}
         {value.pass && <Pass>(Pass)</Pass>}
       </Name>
       {inGame && (
