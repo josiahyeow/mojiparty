@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
-import { Box, H3, Label, Select } from '../../Styled/Styled'
+import { Box, H3, Label, Select, SelectWrapper } from '../../Styled/Styled'
 import socket from '../../../utils/socket'
 import emoji from '../../../utils/emoji'
 import { RoomContext, RoomContextProps } from '../../providers/RoomProvider'
@@ -68,6 +68,43 @@ const ModeSettings = styled.div`
   grid-gap: 1rem;
 `
 
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`
+
+const Tab = styled.button<{ selected: boolean }>`
+  font-size: 100%;
+  padding: 0.5rem 1rem;
+  border-radius: 0px 6px 6px 0px;
+
+  border: none;
+  background-color: #ffffff;
+  font-weight: bold;
+  color: #050509;
+  cursor: pointer;
+  border: #050509 3px solid;
+
+  &:first-child {
+    border-radius: 6px 0px 0px 6px;
+    border-right: 1.5px solid #050509;
+  }
+
+  &:last-child {
+    border-left: 1.5px solid #050509;
+  }
+
+  ${({ selected }) =>
+    selected &&
+    `background-color: #050509;
+  font-weight: bold;
+  color: #ffffff;`};
+`
+
+const Subscript = styled.span`
+  font-size: 0.8rem;
+`
+
 const ONLY_HOST_MESSAGE = 'Only the host can change the game settings'
 
 const MAX_PLAYERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
@@ -78,6 +115,7 @@ const GameSettings = () => {
     RoomContext
   ) as RoomContextProps
   const [maxPlayers, setMaxPlayers] = useState(6)
+  const [tab, setTab] = useState<'mode' | 'categories'>('mode')
   const scoreLimit = settings?.scoreLimit || 0
   const selectedCategories: Categories = settings?.selectedCategories || {}
   const rounds = settings?.rounds || 0
@@ -183,149 +221,178 @@ const GameSettings = () => {
       <Box>
         <Container>
           <H3>Game Settings</H3>
-          <Label htmlFor="players-input">Max players</Label>
-          <Select
-            id="mode-input"
-            value={maxPlayers}
-            onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
-            disabled={!isHost}
-            title={!isHost ? ONLY_HOST_MESSAGE : ''}
-          >
-            <optgroup label="Party">
-              {MAX_PLAYERS.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="Mega Party (Experimental)">
-              {MAX_PLAYERS_EXPERIMENTAL.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </optgroup>
-          </Select>
-          <Label htmlFor="mode-input">Game mode</Label>
-          {/* <Select
-            id="mode-input"
-            value={mode}
-            onChange={(e) => updateMode(e.target.value)}
-            disabled={!isHost}
-            title={!isHost ? ONLY_HOST_MESSAGE : ''}
-          >
-            {GAME_MODES.map(({ name, value }) => (
-              <option key={value} value={value}>
-                {name}
-              </option>
-            ))}
-          </Select> */}
-          <CategorySelector>
-            {GAME_MODES.map(({ name, value, icon, description }) => (
-              <Category>
-                <CategoryCheckbox
-                  type="radio"
-                  id={name}
-                  name={name}
-                  value={value}
-                  checked={value === mode}
-                  onChange={() => updateMode(value)}
-                />
-                <CategoryLabel
-                  htmlFor={name}
-                  disabled={!isHost}
-                  title={description}
-                >
-                  <CategoryIcon>{emoji(icon)}</CategoryIcon>
-                  <CategoryName>{name}</CategoryName>
-                </CategoryLabel>
-              </Category>
-            ))}
-          </CategorySelector>
+          <Tabs>
+            <Tab selected={tab === 'mode'} onClick={() => setTab('mode')}>
+              Mode
+            </Tab>
+            <Tab
+              selected={tab === 'categories'}
+              onClick={() => setTab('categories')}
+            >
+              Categories
+            </Tab>
+          </Tabs>
 
-          {mode === 'classic' && (
+          {tab === 'mode' && (
             <>
-              {/* <Label htmlFor="scorelimit-input">Score Limit</Label> */}
-              <Select
-                id="scorelimit-input"
-                value={scoreLimit}
-                onChange={(e) => updateScoreLimit(e.target.value)}
-                disabled={!isHost}
-                title={!isHost ? ONLY_HOST_MESSAGE : ''}
-              >
-                {SCORE_LIMITS.map((scoreLimit) => (
-                  <option key={scoreLimit} value={scoreLimit}>
-                    {scoreLimit} points to win
-                  </option>
+              {' '}
+              <Label htmlFor="players-input">Max players</Label>
+              <SelectWrapper>
+                <Select
+                  id="mode-input"
+                  value={maxPlayers}
+                  onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
+                  disabled={!isHost}
+                  title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                >
+                  <optgroup label="Party">
+                    {MAX_PLAYERS.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Mega Party (Experimental)">
+                    {MAX_PLAYERS_EXPERIMENTAL.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </optgroup>
+                </Select>
+              </SelectWrapper>
+              <Label htmlFor="mode-input">Game mode</Label>
+              {/* <Select
+              id="mode-input"
+              value={mode}
+              onChange={(e) => updateMode(e.target.value)}
+              disabled={!isHost}
+              title={!isHost ? ONLY_HOST_MESSAGE : ''}
+            >
+              {GAME_MODES.map(({ name, value }) => (
+                <option key={value} value={value}>
+                  {name}
+                </option>
+              ))}
+            </Select> */}
+              <CategorySelector>
+                {GAME_MODES.map(({ name, value, icon, description }) => (
+                  <Category>
+                    <CategoryCheckbox
+                      type="radio"
+                      id={name}
+                      name={name}
+                      value={value}
+                      checked={value === mode}
+                      onChange={() => updateMode(value)}
+                    />
+                    <CategoryLabel
+                      htmlFor={name}
+                      disabled={!isHost}
+                      title={description}
+                    >
+                      <CategoryIcon>{emoji(icon)}</CategoryIcon>
+                      <CategoryName>{name}</CategoryName>
+                    </CategoryLabel>
+                  </Category>
                 ))}
-              </Select>
-            </>
-          )}
-          {(mode === 'skribbl' || mode === 'pictionary') && (
-            <ModeSettings>
-              {/* <Label htmlFor="rounds-input">Rounds</Label> */}
-              <Select
-                id="rounds-input"
-                value={rounds}
-                onChange={(e) => updateRounds(e.target.value)}
-                disabled={!isHost}
-                title={!isHost ? ONLY_HOST_MESSAGE : ''}
-              >
-                {ROUNDS.map((rounds) => (
-                  <option key={rounds} value={rounds}>
-                    {rounds} rounds
-                  </option>
-                ))}
-              </Select>
-              {/* <Label htmlFor="roundTimer-input">Time per round (sec)</Label> */}
-              <Select
-                id="roundTimer-input"
-                value={roundTimer}
-                onChange={(e) => updateRoundTimer(e.target.value)}
-                disabled={!isHost}
-                title={!isHost ? ONLY_HOST_MESSAGE : ''}
-              >
-                {ROUND_TIMERS.map((roundTimer) => (
-                  <option key={roundTimer} value={roundTimer}>
-                    {roundTimer === 0 ? 'Unlimited' : roundTimer} sec each
-                  </option>
-                ))}
-              </Select>
-            </ModeSettings>
-          )}
-          <Label>Categories</Label>
-          <CategorySelector>
-            {Object.entries(selectedCategories)
-              .sort((a, b) => a[1].weight - b[1].weight)
-              .map(([category, value]) => (
-                <Category key={category}>
-                  <CategoryCheckbox
-                    type="checkbox"
-                    name={`${category}-checkbox`}
-                    value={`${category}`}
-                    checked={selectedCategories[category].include}
-                    onChange={(event) =>
-                      handleUpdateCategory(event.target.value)
-                    }
-                    disabled={!isHost}
-                    title={!isHost ? ONLY_HOST_MESSAGE : ''}
-                  />
-                  <CategoryLabel
-                    htmlFor={`${category}-checkbox`}
-                    onClick={() => isHost && handleUpdateCategory(category)}
+              </CategorySelector>
+              {mode === 'classic' && (
+                <>
+                  {/* <Label htmlFor="scorelimit-input">Score Limit</Label> */}
+                  <Select
+                    id="scorelimit-input"
+                    value={scoreLimit}
+                    onChange={(e) => updateScoreLimit(e.target.value)}
                     disabled={!isHost}
                     title={!isHost ? ONLY_HOST_MESSAGE : ''}
                   >
-                    <CategoryIcon>
-                      {emoji(selectedCategories[category].icon)}
-                    </CategoryIcon>
-                    <CategoryName>
-                      {selectedCategories[category].name}
-                    </CategoryName>
-                  </CategoryLabel>
-                </Category>
-              ))}
-          </CategorySelector>
+                    {SCORE_LIMITS.map((scoreLimit) => (
+                      <option key={scoreLimit} value={scoreLimit}>
+                        {scoreLimit} points to win
+                      </option>
+                    ))}
+                  </Select>
+                </>
+              )}
+              {(mode === 'skribbl' || mode === 'pictionary') && (
+                <ModeSettings>
+                  {/* <Label htmlFor="rounds-input">Rounds</Label> */}
+                  <Select
+                    id="rounds-input"
+                    value={rounds}
+                    onChange={(e) => updateRounds(e.target.value)}
+                    disabled={!isHost}
+                    title={
+                      !isHost ? ONLY_HOST_MESSAGE : 'Number of rounds to play'
+                    }
+                  >
+                    {ROUNDS.map((rounds) => (
+                      <option key={rounds} value={rounds}>
+                        {rounds} rounds
+                      </option>
+                    ))}
+                  </Select>
+                  {/* <Label htmlFor="roundTimer-input">Time per round (sec)</Label> */}
+                  <Select
+                    id="roundTimer-input"
+                    value={roundTimer}
+                    onChange={(e) => updateRoundTimer(e.target.value)}
+                    disabled={!isHost}
+                    title={
+                      !isHost
+                        ? ONLY_HOST_MESSAGE
+                        : 'Number of seconds per round'
+                    }
+                  >
+                    {ROUND_TIMERS.map((roundTimer) => (
+                      <option key={roundTimer} value={roundTimer}>
+                        {roundTimer === 0 ? 'Unlimited' : roundTimer} sec
+                      </option>
+                    ))}
+                  </Select>
+                </ModeSettings>
+              )}
+            </>
+          )}
+          {tab === 'categories' && (
+            <>
+              {' '}
+              <Label>Categories</Label>
+              <CategorySelector>
+                {Object.entries(selectedCategories)
+                  .sort((a, b) => a[1].weight - b[1].weight)
+                  .map(([category, value]) => (
+                    <Category key={category}>
+                      <CategoryCheckbox
+                        type="checkbox"
+                        name={`${category}-checkbox`}
+                        value={`${category}`}
+                        checked={selectedCategories[category].include}
+                        onChange={(event) =>
+                          handleUpdateCategory(event.target.value)
+                        }
+                        disabled={!isHost}
+                        title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                      />
+                      <CategoryLabel
+                        htmlFor={`${category}-checkbox`}
+                        onClick={() => isHost && handleUpdateCategory(category)}
+                        disabled={!isHost}
+                        title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                      >
+                        <CategoryIcon>
+                          {emoji(selectedCategories[category].icon)}
+                        </CategoryIcon>
+                        <CategoryName>
+                          {selectedCategories[category].name}
+                        </CategoryName>
+                      </CategoryLabel>
+                    </Category>
+                  ))}
+              </CategorySelector>
+            </>
+          )}
         </Container>
       </Box>
     ),

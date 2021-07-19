@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
+import React from 'react'
 
 export const Grid = styled.div`
   display: grid;
@@ -118,7 +119,20 @@ export const Label = styled.label`
   font-family: 'Poppins', sans-serif;
 `
 
-export const Select = styled.select`
+export const SelectWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  &:after {
+    content: ' ▾';
+    font-weight: 600;
+    font-size: 1rem;
+    top: 18px;
+    right: 16px;
+    position: absolute;
+  }
+`
+
+export const StyledSelect = styled.select`
   font-size: 100%;
   flex-grow: 1;
   padding: 1rem;
@@ -128,17 +142,8 @@ export const Select = styled.select`
   -moz-appearance: none; /* Firefox */
   -webkit-appearance: none; /* Safari and Chrome */
   appearance: none;
-  &:hover {
-    border: #050509 3px solid;
-  }
-  &:focus {
-    background-color: #ffffff;
-  }
-  &:disabled {
-    background-color: #dde2e6;
-    border: #dde2e6 3px solid;
-    cursor: not-allowed;
-  }
+  width: 100%;
+  padding-right: 1rem;
   transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
 `
 export const Link = styled.a`
@@ -152,3 +157,9 @@ export const Link = styled.a`
   min-width: 6em;
   text-align: center;
 `
+
+export const Select = ({ ...props }) => (
+  <SelectWrapper>
+    <StyledSelect {...props} />
+  </SelectWrapper>
+)
