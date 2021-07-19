@@ -1,12 +1,16 @@
 function logRoom(room) {
-  const lobbyPlayers = Object.keys(room.players).map(
-    (playerId) =>
-      ` ${room.players[playerId].emoji} ${room.players[playerId].name}`
-  );
-  const gamePlayers = Object.keys(room.players).map(
-    (playerId) =>
-      ` ${room.players[playerId].emoji} ${room.players[playerId].name} - ${room.players[playerId].score}, ${room.players[playerId].pass}`
-  );
+  const lobbyPlayers =
+    room.players &&
+    Object.keys(room.players).map(
+      (playerId) =>
+        ` ${room.players[playerId].emoji} ${room.players[playerId].name}`
+    );
+  const gamePlayers =
+    room.players &&
+    Object.keys(room.players).map(
+      (playerId) =>
+        ` ${room.players[playerId].emoji} ${room.players[playerId].name} - ${room.players[playerId].score}, ${room.players[playerId].pass}`
+    );
   if (!room.game) {
     console.log(
       `[${room.name}] | lobby | ${

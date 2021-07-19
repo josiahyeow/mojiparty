@@ -26,7 +26,7 @@ function add({ roomName, roomPassword = "" }, playerId, { name, emoji }) {
         host: false,
       };
     }
-    setHost(roomName);
+    setHost(room);
 
     // Disable chat when over 50 players
     const lotsOfPlayers = Object.keys(room.players).length > 50;
@@ -63,7 +63,7 @@ function remove(roomName, playerId) {
     const room = Rooms.get(roomName);
     const player = get(roomName, playerId);
     delete room.players[playerId];
-    if (player.host) setHost(roomName);
+    if (player.host) setHost(room);
 
     // Disable chat when over 50 players
     const lotsOfPlayers = Object.keys(room.players).length > 50;
@@ -124,16 +124,16 @@ const removeFromAllRooms = (socket) => {
   }
 };
 
-function setHost(roomName) {
-  const room = Rooms.get(roomName);
+function setHost(room) {
   const hostExists = Object.values(room.players).find(
     (player) => player.host === true
   );
   const randomPlayerId = Object.keys(room.players).pop();
-  if (!hostExists) {
+  if (
+    (!hostExists || room.players.length === 1) &&
+    room.players[randomPlayerId] != null
+  ) {
     room.players[randomPlayerId].host = true;
-  } else {
-    room.players[randomPlayerId].host = false;
   }
   Rooms.update(room);
 }

@@ -30,7 +30,7 @@ function passEmojiSet(roomName, playerId) {
     return pass;
   } catch (e) {
     console.error(e);
-    throw new Error("Could not pass emoji set", e);
+    throw new Error("Could not pass emoji set");
   }
 }
 
@@ -74,7 +74,7 @@ function addPoint(roomName, playerId) {
     Rooms.update(room);
   } catch (e) {
     console.log(e);
-    throw new Error("Could not add point", e.message);
+    throw new Error("Could not add point");
   }
 }
 

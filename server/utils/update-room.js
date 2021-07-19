@@ -6,7 +6,8 @@ function sendRoomUpdate(io, roomName, item = "") {
     db.ref("rooms/" + roomName)
       .get()
       .then((doc) => {
-        const room = doc.val();
+        const data = doc.val();
+        const room = { ...data, players: data.players || {} };
         logRoom(room);
         if (item === "settings") {
           io.to(roomName).emit("settings-update", room.settings);
