@@ -95,7 +95,6 @@ function App() {
   }
 
   useEffect(() => {
-    handleResize()
     window.addEventListener('resize', handleResize)
   }, [content])
 
