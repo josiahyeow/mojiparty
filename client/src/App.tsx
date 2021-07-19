@@ -6,6 +6,7 @@ import config from './config/config'
 import Home from './components/Home/Home'
 import RoomEntry from './components/Room/RoomEntry/RoomEntry'
 import GlobalStyle from './components/Styled/GlobalStyle'
+import { Footer } from './components/Footer/Footer'
 // import socket from './utils/socket'
 
 const Logo = styled.h1`
@@ -126,6 +127,7 @@ function App() {
             </Body>
           </Router>
         </Grid>
+        <Footer />
       </Scale>
     </>
   )
