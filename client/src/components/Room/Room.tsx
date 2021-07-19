@@ -1,10 +1,7 @@
 import React, { useContext, useEffect, useMemo } from 'react'
-import ReactGA from 'react-ga'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
 import emoji from '../../utils/emoji'
 import { MotionBox } from '../Styled/Styled'
-import socket from '../../utils/socket'
 import Lobby from './Lobby/Lobby'
 import Game from './Game/Game'
 import TooBigDialog from './TooBigDialog/TooBigDialog'
@@ -81,12 +78,12 @@ const Room = () => {
   return (
     <>
       <TopBar>
-        {useMemo(
+        {/* {useMemo(
           () => (
             <TooBigDialog />
           ),
           []
-        )}
+        )} */}
       </TopBar>
       {error && <Error>{error}</Error>}
       {room.name ? (
