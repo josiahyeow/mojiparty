@@ -7,6 +7,7 @@ import Socials from './Socials'
 import Contact from './Contact'
 import Suggestions from './Suggestions'
 import Notice from './Notice'
+import Donate from './Donate'
 
 const LinksGrid = styled(Grid)`
   grid-template-columns: 0.5fr 0.5fr;
@@ -26,6 +27,7 @@ const Home = (props: any) => {
       </Left>
       <Middle>
         <Instructions />
+        <Donate />
         <LinksGrid>
           <Contact />
           <Suggestions />

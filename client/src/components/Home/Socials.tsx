@@ -7,6 +7,7 @@ import { Box, H2, Link } from '../Styled/Styled'
 const SocialLinks = styled.div`
   display: flex;
   flex-wrap: wrap;
+  width: 100%;
 `
 
 const Facebook = styled(Link)`
@@ -17,6 +18,7 @@ const Facebook = styled(Link)`
     color: #1877f1;
     border: #1877f1 3px solid;
   }
+  width: 100%;
 `
 
 const Instagram = styled(Link)`
@@ -35,6 +37,7 @@ const Instagram = styled(Link)`
     color: #ce2362;
     border: #ce2362 3px solid;
   }
+  width: 100%;
 `
 
 const Socials = () => {
