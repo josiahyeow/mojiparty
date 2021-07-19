@@ -37,11 +37,11 @@ const Room = () => {
 
   const isHost = players ? players[player?.id]?.host : player?.host
 
-  // useEffect(() => {
-  //   if (error) {
-  //     window.location.reload()
-  //   }
-  // }, [error])
+  useEffect(() => {
+    if (error === 'disconnected') {
+      window.location.reload()
+    }
+  }, [error])
 
   const inGameHostMessage = useMemo(() => {
     if (isHost) {

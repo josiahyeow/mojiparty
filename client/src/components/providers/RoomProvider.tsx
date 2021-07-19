@@ -70,7 +70,7 @@ const RoomProvider = ({ player: playerData, room, children }) => {
         nonInteraction: true,
       })
       console.error(error)
-      setError(`An error occurred. Please try that again.`)
+      setError(`disconnected`)
       // setTimeout(() => history.push(`/`), 3000)
     })
     socket.on('error-message', (error) => {
