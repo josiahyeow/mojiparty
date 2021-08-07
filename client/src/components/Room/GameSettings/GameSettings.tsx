@@ -436,6 +436,7 @@ const GameSettings = () => {
             },
           }}
         >
+          <h2>Game modes</h2>
           <h3>{emoji('🎉')} Party</h3>
           <p>
             The faster you guess, the more points you get!
