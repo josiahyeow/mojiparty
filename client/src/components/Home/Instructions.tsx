@@ -28,25 +28,23 @@ const Instructions = () => {
         </InstructionLine>
         <strong>Setup:</strong>
         <InstructionLine>
-          {emoji('🤔')} Choose the number of <strong>points</strong> you want to
-          play up to.
+          {emoji('🤔')} Pick the <strong>game mode</strong> you want to play.
         </InstructionLine>
         <InstructionLine>
-          {emoji('📚')} Pick the <strong>categories</strong> of emojis you want
-          to decipher.
+          {emoji('📚')} Pick the <strong>categories</strong> of emoji codes you
+          want to decipher.
         </InstructionLine>
         <strong>Play:</strong>
         <InstructionLine>
           {emoji('💬')} When the game starts, be the first player to{' '}
-          <strong>decipher the emojis</strong> to get a point.
+          <strong>decipher the emojis</strong>.
         </InstructionLine>
         <InstructionLine>
           {emoji('🙅')} If you get stuck, press the <strong>pass button</strong>{' '}
-          - if everyone passes, the emoji set will be skipped.
+          - if the majority passes, the emoji code will be skipped.
         </InstructionLine>
         <InstructionLine>
-          {emoji('🏆')} First to get the chosen number of points,{' '}
-          <strong>wins!</strong>
+          {emoji('🏆')} May the best emoji guesser <strong>win!</strong>
         </InstructionLine>
       </InstructionSet>
     </Box>

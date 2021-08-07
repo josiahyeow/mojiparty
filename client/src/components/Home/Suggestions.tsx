@@ -33,7 +33,7 @@ const Contact = () => {
             })
           }
         >
-          Submit your own Emoji Set
+          Submit your own Emoji Code
         </Email>
       </Links>
     </Box>
