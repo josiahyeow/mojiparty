@@ -432,6 +432,7 @@ const GameSettings = () => {
               bottom: 'auto',
               marginRight: '-50%',
               transform: 'translate(-50%, -50%)',
+              padding: '1em 2em',
             },
           }}
         >
@@ -443,7 +444,7 @@ const GameSettings = () => {
             Choose the number of rounds you want to play, and time (seconds) for
             each round.
           </p>
-
+          <hr style={{ borderTop: '#050509 3px solid', margin: '2em 0' }} />
           <h3>{emoji('🎂')} Classic</h3>
           <p>
             The first to guess the emoji, gets the point!
