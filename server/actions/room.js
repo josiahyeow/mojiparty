@@ -18,7 +18,7 @@ const create = (roomName) => {
         settings: {
           scoreLimit: DEFAULT_SCORE_LIMIT,
           selectedCategories: DEFAULT_SELECTED_CATEGORIES,
-          mode: GAME_MODES.CLASSIC,
+          mode: GAME_MODES.SKRIBBL,
           timer: DEFAULT_TIME_PER_ROUND,
         },
         lastEvent: { type: "Room created" },

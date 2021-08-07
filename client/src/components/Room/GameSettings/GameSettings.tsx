@@ -129,17 +129,17 @@ const GameSettings = () => {
 
   const GAME_MODES = [
     {
+      name: 'Party',
+      value: 'skribbl',
+      icon: '🎮',
+      description: 'The faster you guess, the more points you get!',
+    },
+    {
       name: 'Classic',
       value: 'classic',
       icon: '🕹️',
       description:
         'The first to guess the emoji, gets the point! Winner takes it all.',
-    },
-    {
-      name: 'New',
-      value: 'skribbl',
-      icon: '🎮',
-      description: 'The faster you guess, the more points you get!',
     },
     // { name: 'Custom', value: 'pictionary' },
   ]

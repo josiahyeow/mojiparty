@@ -51,9 +51,7 @@ const chatCommands = (io, socket, roomName, message, inGame) => {
       }
     } else {
       socket.emit("new-chat-message", {
-        text: `Available commands: ${
-          !inGame ? "/mode [classic/pictionary] (WIP);" : ""
-        } /kick [player name]`,
+        text: `Available commands: /kick [player name]`,
         player: { emoji: "❓", name: "BOT" },
         correct: false,
         system: true,
