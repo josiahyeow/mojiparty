@@ -55,7 +55,7 @@ const RoomProvider = ({ player: playerData, room, children }) => {
         action: 'Left room',
         nonInteraction: true,
       })
-      socket.emit('player-left', { roomName: room.name, player: playerData })
+      socket.emit('player-left', room.name, playerData)
     }
   }, [])
 
@@ -93,9 +93,9 @@ const RoomProvider = ({ player: playerData, room, children }) => {
     })
 
     return () => {
-      socket.off('joined-room')
-      socket.off('room-disconnected')
-      socket.off('room-update')
+      socket.removeEventListener('joined-room')
+      socket.removeEventListener('room-disconnected')
+      socket.removeEventListener('room-update')
     }
   }, [])
 

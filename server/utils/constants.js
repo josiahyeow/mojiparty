@@ -13,23 +13,16 @@ const DEFAULT_SELECTED_CATEGORIES = {
 const DEFAULT_TIME_PER_ROUND = 0;
 const DEFAULT_ROUNDS = 10;
 
-enum GAME_MODE {
-  CLASSIC = "classic",
-  SKRIBBL = "skribbl",
-  PICTIONARY = "pictionary",
-}
-
 const GAME_MODES = {
   CLASSIC: "classic",
   SKRIBBL: "skribbl",
   PICTIONARY: "pictionary",
 };
 
-export {
+module.exports = {
   DEFAULT_SCORE_LIMIT,
   DEFAULT_SELECTED_CATEGORIES,
   DEFAULT_TIME_PER_ROUND,
   DEFAULT_ROUNDS,
-  GAME_MODE,
   GAME_MODES,
 };

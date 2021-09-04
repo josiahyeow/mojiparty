@@ -1,24 +1,12 @@
-import * as Rooms from "./rooms";
-import { GAME_MODE } from "../utils/constants";
-import { updateGameEvent } from "./event";
-import * as Players from "./players";
-import * as Game from "./game";
+const Rooms = require("./rooms");
+const { GAME_MODES } = require("../utils/constants");
+const { updateGameEvent } = require("./event");
+const Players = require("./players");
+const Game = require("./game");
 
-export type Player = {
-  id: string;
-  name: string;
-  score: number;
-  emoji: string;
-  pass: boolean;
-  guessed: boolean;
-  drawer: boolean;
-  host: boolean;
-};
-
-function passEmojiSet(roomName: string, playerId: string) {
+function passEmojiSet(roomName, playerId) {
   try {
     const room = Rooms.get(roomName);
-    if (!room) return;
     room.players[playerId].pass = true;
     let pass = false;
     let passedPlayers = 0;
@@ -46,12 +34,10 @@ function passEmojiSet(roomName: string, playerId: string) {
   }
 }
 
-function addPoint(roomName: string, playerId: string) {
+function addPoint(roomName, playerId) {
   try {
     const room = Rooms.get(roomName);
-    if (!room || !room.game) return;
-
-    if (room.settings.mode === GAME_MODE.CLASSIC) {
+    if (room.settings.mode === GAME_MODES.CLASSIC) {
       room.players[playerId].score += 1;
       if (room.players[playerId].score === room.settings.scoreLimit) {
         Game.getWinners(roomName);
@@ -61,7 +47,7 @@ function addPoint(roomName: string, playerId: string) {
         type: "correct",
       };
     }
-    if (room.settings.mode === GAME_MODE.SKRIBBL) {
+    if (room.settings.mode === GAME_MODES.SKRIBBL) {
       const points = room.game.timeLeft * 0.3 * 100;
       room.players[playerId].guessed = true;
       room.players[playerId].score += points;
@@ -70,7 +56,7 @@ function addPoint(roomName: string, playerId: string) {
         type: "guessed",
       };
     }
-    if (room.settings.mode === GAME_MODE.PICTIONARY) {
+    if (room.settings.mode === GAME_MODES.PICTIONARY) {
       const drawer = room.game.drawer;
       room.players[drawer].score += 2;
       room.game.lastEvent = {
@@ -92,12 +78,16 @@ function addPoint(roomName: string, playerId: string) {
   }
 }
 
-function isHost(roomName: string, playerId: string) {
+function isHost(roomName, playerId) {
   try {
-    return Rooms.get(roomName)?.players[playerId].host;
+    return Rooms.get(roomName).players[playerId].host;
   } catch (e) {
     throw e;
   }
 }
 
-export { passEmojiSet, addPoint, isHost };
+module.exports = {
+  passEmojiSet,
+  addPoint,
+  isHost,
+};
