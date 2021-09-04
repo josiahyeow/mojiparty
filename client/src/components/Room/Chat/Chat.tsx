@@ -107,6 +107,23 @@ const Spacer = styled.div`
   width: 0.5rem;
 `
 
+const Donate = styled.a`
+  text-decoration: none;
+  color: #474747;
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem 0.2rem;
+  border: 2px solid #484848;
+  background-color: #f1f4f7;
+  margin: 0em 0.2em;
+
+  &:hover {
+    border: 2px solid #8a4b38;
+    color: #8a4b38;
+    border: 2px solid #8a4b38;
+  }
+  transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
+`
+
 const Chat = ({ inGame }) => {
   const { room, settings, player, players, activeGame } = useContext(
     RoomContext
@@ -170,31 +187,50 @@ const Chat = ({ inGame }) => {
 
   const messageBubbles = useMemo(
     () =>
-      messages.slice(Math.max(messages.length - 10, 0)).map(
-        (message, index) =>
-          message.player && (
-            <Message
-              key={index}
-              animate={{ scale: 1, opacity: 1 }}
-              initial={{ scale: 0.6, opacity: 0 }}
-            >
-              <Player>{emoji(message.player.emoji)}</Player>
-              {message.correct ? (
-                <CorrectBubble>
-                  <PlayerName>{message.player.name}:</PlayerName>
-                  {message.text} ✔
-                </CorrectBubble>
-              ) : message.system ? (
-                <SystemBubble>{emoji(message.text)}</SystemBubble>
-              ) : (
-                <Bubble>
-                  <PlayerName>{message.player.name}:</PlayerName>
-                  {emoji(escape(message.text))}
-                </Bubble>
-              )}
-            </Message>
-          )
-      ),
+      [{ text: 'donation', player: { emoji: '🙏' } }, ...messages]
+        .slice(Math.max(messages.length - 10, 0))
+        .map(
+          (message, index) =>
+            message.player && (
+              <Message
+                key={index}
+                animate={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0.6, opacity: 0 }}
+              >
+                <Player>{emoji(message.player.emoji)}</Player>
+                {message.text === 'donation' ? (
+                  <SystemBubble>
+                    Enjoy the party? Help us out by{' '}
+                    <Donate
+                      href="https://ko-fi.com/mojiparty"
+                      target="_blank"
+                      onClick={() => {
+                        ReactGA.event({
+                          category: 'Lobby',
+                          action: 'Clicked donate',
+                        })
+                      }}
+                    >
+                      {emoji('☕')} donating
+                    </Donate>{' '}
+                    and we'll {emoji('❤️')} you 5eva!
+                  </SystemBubble>
+                ) : message.correct ? (
+                  <CorrectBubble>
+                    <PlayerName>{message.player.name}:</PlayerName>
+                    {message.text} ✔
+                  </CorrectBubble>
+                ) : message.system ? (
+                  <SystemBubble>{emoji(message.text)}</SystemBubble>
+                ) : (
+                  <Bubble>
+                    <PlayerName>{message.player.name}:</PlayerName>
+                    {emoji(escape(message.text))}
+                  </Bubble>
+                )}
+              </Message>
+            )
+        ),
     [messages]
   )
 
