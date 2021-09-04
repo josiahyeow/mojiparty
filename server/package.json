@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prestart": "yarn build",
-    "start": "nodemon -r dotenv/config ./build/app.js",
+    "predev": "yarn build",
+    "dev": "nodemon -r dotenv/config ./build/app.js",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watchAll",
     "build": "tsc --project ./"
