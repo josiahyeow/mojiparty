@@ -18,7 +18,7 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 app.use(cors());
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(process.cwd(), "./client/build")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -56,7 +56,8 @@ io.on("connection", (socket: Socket) => {
 app.use("/room", roomRouter);
 
 app.get("/*", (_, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  console.log(process.cwd());
+  res.sendFile(path.join(process.cwd(), "./client/build", "index.html"));
 });
 
 // Error handling
@@ -69,6 +70,6 @@ app.use(function (req, res, next) {
 });
 
 server.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+  console.log(`Listening on port ${port} ${process.cwd()}`);
   fetchEmojisFromGoogleSheets();
 });
