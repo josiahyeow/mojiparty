@@ -10,9 +10,9 @@
     "server"
   ],
   "scripts": {
-    "dev": "kill-port --port 3000,5000 && concurrently \"yarn workspace client start\" \"yarn workspace server start\"",
-    "start": "node server/app.js",
-    "build": "yarn workspace client build",
+    "dev": "kill-port --port 3000,5000 && concurrently \"yarn workspace client start\" \"yarn workspace server dev\"",
+    "start": "node server/build/app.js",
+    "build": "yarn workspaces run build",
     "test": "yarn workspaces run test"
   },
   "devDependencies": {
