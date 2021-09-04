@@ -1,6 +1,6 @@
 import { shuffle } from "lodash";
-import { get, update, getEmojis, Categories, EmojiSet } from "./rooms";
-import { updateGameEvent } from "./event";
+import { get, update, getEmojis, EmojiSet } from "./rooms";
+import { GameEvent, updateGameEvent } from "./event";
 import * as Settings from "./settings";
 import * as Players from "./players";
 
@@ -8,6 +8,23 @@ import { GAME_MODE } from "../utils/constants";
 import { hintTimer } from "../utils/hint-timer";
 import { roundTimer } from "../utils/round-timer";
 import { Server } from "socket.io";
+import type { Player } from "./player";
+import type { Categories } from "./settings";
+
+export type Game = {
+  emojiSets: EmojiSet[];
+  currentEmojiSet: EmojiSet | null;
+  previousEmojiSet: EmojiSet | null;
+  scoreLimit: number;
+  lastEvent: GameEvent;
+  round: number;
+  top5: Player[];
+  chat: boolean;
+  winners: Player[] | null;
+  timeLeft: number;
+  drawer: string;
+  drawers: string[];
+};
 
 function filterEmojis(selectedCategories: Categories) {
   const emojis = getEmojis();

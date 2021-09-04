@@ -2,6 +2,34 @@ import { get, update } from "../actions/rooms";
 import { GAME_MODE } from "../utils/constants";
 import { updateGameEvent } from "./event";
 
+export type Category = {
+  name: string;
+  icon: string;
+  include: boolean;
+  weight: number;
+};
+
+export type Categories = {
+  general: Category;
+  foods: Category;
+  movies: Category;
+  tv: Category;
+  music: Category;
+  places: Category;
+  brands: Category;
+  anime: Category;
+  koreaboo: Category;
+};
+
+export type Settings = {
+  scoreLimit: number;
+  selectedCategories: Categories;
+  mode: GAME_MODE;
+  timer: number;
+  rounds: number;
+  chat: boolean;
+};
+
 function getMode(roomName: string) {
   const room = get(roomName);
   if (!room) {

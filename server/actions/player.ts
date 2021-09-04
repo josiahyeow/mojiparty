@@ -4,6 +4,17 @@ import { updateGameEvent } from "./event";
 import * as Players from "./players";
 import * as Game from "./game";
 
+export type Player = {
+  id: string;
+  name: string;
+  score: number;
+  emoji: string;
+  pass: boolean;
+  guessed: boolean;
+  drawer: boolean;
+  host: boolean;
+};
+
 function passEmojiSet(roomName: string, playerId: string) {
   try {
     const room = Rooms.get(roomName);

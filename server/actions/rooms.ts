@@ -7,71 +7,17 @@ import {
   DEFAULT_ROUNDS,
   GAME_MODE,
 } from "../utils/constants";
-
-export type Player = {
-  id: string;
-  name: string;
-  score: number;
-  emoji: string;
-  pass: boolean;
-  guessed: boolean;
-  drawer: boolean;
-  host: boolean;
-};
-
-export type Category = {
-  name: string;
-  icon: string;
-  include: boolean;
-  weight: number;
-};
-
-export type Categories = {
-  general: Category;
-  foods: Category;
-  movies: Category;
-  tv: Category;
-  music: Category;
-  places: Category;
-  brands: Category;
-  anime: Category;
-  koreaboo: Category;
-};
-
-export type Settings = {
-  scoreLimit: number;
-  selectedCategories: Categories;
-  mode: GAME_MODE;
-  timer: number;
-  rounds: number;
-  chat: boolean;
-};
-
-export type Event = {
-  type: string;
-};
-
-export type Game = {
-  emojiSets: EmojiSet[];
-  currentEmojiSet: EmojiSet | null;
-  previousEmojiSet: EmojiSet | null;
-  scoreLimit: number;
-  lastEvent: Event;
-  round: number;
-  top5: Player[];
-  chat: boolean;
-  winners: Player[] | null;
-  timeLeft: number;
-  drawer: string;
-  drawers: string[];
-};
+import type { GameEvent } from "./event";
+import type { Game } from "./game";
+import type { Player } from "./player";
+import type { Settings } from "./settings";
 
 export type Room = {
   name: string;
   password?: string;
   players: Record<string, Player>;
   settings: Settings;
-  lastEvent: Event;
+  lastEvent: GameEvent;
   createdAt?: number;
   game: Game | null;
 };

@@ -1,5 +1,9 @@
 import { get, update } from "../actions/rooms";
 
+export type GameEvent = {
+  type: string;
+};
+
 function updateGameEvent(roomName: string, event: string) {
   const room = get(roomName);
   if (!room) return;
