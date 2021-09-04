@@ -1,22 +1,74 @@
-const { db } = require("../firebase");
+import { db } from "../firebase";
 
-const {
+import {
   DEFAULT_SCORE_LIMIT,
   DEFAULT_SELECTED_CATEGORIES,
   DEFAULT_TIME_PER_ROUND,
   DEFAULT_ROUNDS,
-  GAME_MODES,
-} = require("../utils/constants");
+  GAME_MODE,
+} from "../utils/constants";
+import type { GameEvent } from "./event";
+import type { Game } from "./game";
+import type { Player } from "./player";
+import type { Settings } from "./settings";
 
-let emojis = {};
-let rooms = {};
+export type Room = {
+  name: string;
+  password?: string;
+  players: Record<string, Player>;
+  settings: Settings;
+  lastEvent: GameEvent;
+  createdAt?: number;
+  game: Game | null;
+};
 
-function setEmojis(fetchedEmojis) {
+export type EmojiSet = {
+  category: string;
+  emojiSet: string;
+  answer: string;
+  showLetters: number[];
+  firstHint: boolean;
+  hint: string;
+};
+
+export type EmojiSets = {
+  general: EmojiSet[];
+  foods: EmojiSet[];
+  movies: EmojiSet[];
+  tv: EmojiSet[];
+  music: EmojiSet[];
+  places: EmojiSet[];
+  brands: EmojiSet[];
+  anime: EmojiSet[];
+  koreaboo: EmojiSet[];
+};
+
+export type Emojis = {
+  emojiSets: EmojiSets;
+};
+
+let emojis: Emojis = {
+  emojiSets: {
+    general: [],
+    foods: [],
+    movies: [],
+    tv: [],
+    music: [],
+    places: [],
+    brands: [],
+    anime: [],
+    koreaboo: [],
+  },
+};
+
+let rooms: Record<string, Room> = {};
+
+function setEmojis(fetchedEmojis: any) {
   emojis.emojiSets = fetchedEmojis;
 }
 
 // Room actions
-function get(roomName) {
+function get(roomName: string) {
   try {
     const room = rooms[roomName];
     if (room) {
@@ -29,31 +81,33 @@ function get(roomName) {
   }
 }
 
-async function getFromDb(roomName) {
+async function getFromDb(roomName: string) {
   const room = await db.ref("rooms/" + roomName).get();
   rooms[roomName] = room.val();
   return room.val();
 }
 
-async function create(roomName, roomPassword = "") {
+async function create(roomName: string, roomPassword = "") {
   try {
     const room = await db.ref("rooms/" + roomName).get();
     if (room.exists()) {
       throw new Error(`Room ${roomName} already exists.`);
     } else {
-      const newRoom = {
+      const newRoom: Room = {
         name: roomName,
         password: roomPassword,
         players: {},
         settings: {
           scoreLimit: DEFAULT_SCORE_LIMIT,
           selectedCategories: DEFAULT_SELECTED_CATEGORIES,
-          mode: GAME_MODES.CLASSIC,
+          mode: GAME_MODE.CLASSIC,
           timer: DEFAULT_TIME_PER_ROUND,
           rounds: DEFAULT_ROUNDS,
+          chat: true,
         },
         lastEvent: { type: "Room created" },
         createdAt: Date.now(),
+        game: null,
       };
       update(newRoom);
       return rooms[roomName];
@@ -63,7 +117,7 @@ async function create(roomName, roomPassword = "") {
   }
 }
 
-function update(updatedRoom) {
+function update(updatedRoom: Room) {
   try {
     db.ref("rooms/" + updatedRoom.name).set(updatedRoom);
   } catch (e) {
@@ -78,7 +132,7 @@ function update(updatedRoom) {
   }
 }
 
-function add(room) {
+function add(room: Room) {
   rooms = { ...rooms, [room.name]: room };
 }
 
@@ -102,7 +156,7 @@ function getEmojis() {
   return emojis;
 }
 
-module.exports = {
+export {
   setEmojis,
   get,
   getFromDb,

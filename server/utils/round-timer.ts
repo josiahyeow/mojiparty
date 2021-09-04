@@ -1,9 +1,19 @@
-const Rooms = require("../actions/rooms");
-const { sendRoomUpdate } = require("./update-room");
+import { Server } from "socket.io";
+import * as Rooms from "../actions/rooms";
+import { sendRoomUpdate } from "./update-room";
 
-function roundTimer(roomName, answer, io, nextEmojiSet, updateTimer) {
+export function roundTimer(
+  roomName: string,
+  answer: string,
+  io: Server,
+  nextEmojiSet: any,
+  updateTimer: any
+) {
   try {
     const room = Rooms.get(roomName);
+    if (!room) {
+      return;
+    }
     const gameOver = room.game?.winners;
     const time = room.settings.timer;
     if (time < 1) {
@@ -12,8 +22,11 @@ function roundTimer(roomName, answer, io, nextEmojiSet, updateTimer) {
     let timeLeft = time;
     const timer = setInterval(() => {
       const room = Rooms.get(roomName);
+      if (!room) {
+        return;
+      }
       let currentEmojiSet;
-      if (room.game) {
+      if (room.game?.currentEmojiSet) {
         currentEmojiSet = room.game.currentEmojiSet.answer;
       }
       if (timeLeft < 0) {
@@ -35,5 +48,3 @@ function roundTimer(roomName, answer, io, nextEmojiSet, updateTimer) {
     console.error(e);
   }
 }
-
-module.exports = roundTimer;

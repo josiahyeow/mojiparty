@@ -1,8 +1,8 @@
-var express = require("express");
-var router = express.Router();
-const { db } = require("../firebase");
+import express from "express";
+import { db } from "../firebase";
+import * as rooms from "../actions/rooms";
 
-const rooms = require("../actions/rooms");
+const router = express.Router();
 
 router.get("/", async (req, res) => {
   const roomName = req.query.roomName;
@@ -39,12 +39,12 @@ router.post("/join", async (req, res) => {
     }
     res.status(200).send({ success: `Room ${roomName} found, joining...` });
   } catch (e) {
-    if (e.message === "Incorrect password.") {
-      res.status(401).send({ error: e.message });
+    if ((e as Error).message === "Incorrect password.") {
+      res.status(401).send({ error: (e as Error).message });
     } else {
       res.status(404).send({ error: `Could not join room. ${e}` });
     }
   }
 });
 
-module.exports = router;
+export default router;
