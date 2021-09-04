@@ -1,30 +1,27 @@
-import * as Rooms from "../actions/rooms";
-import * as Game from "../actions/game";
-import * as Player from "../actions/player";
-import * as Players from "../actions/players";
-import { sendRoomUpdate, resetRoom } from "../utils/update-room";
-import { chatCommands } from "../utils/chat-commands";
-import { hintTimer } from "../utils/hint-timer";
-import { GAME_MODE } from "../utils/constants";
-import { Server, Socket } from "socket.io";
+const Rooms = require("../actions/rooms");
+const Game = require("../actions/game");
+const Player = require("../actions/player");
+const Players = require("../actions/players");
+const { sendRoomUpdate, resetRoom } = require("../utils/update-room");
+const chatCommands = require("../utils/chat-commands");
+const hintTimer = require("../utils/hint-timer");
+const { GAME_MODES } = require("../utils/constants");
 
-export function gameEvents(io: Server, socket: Socket) {
+function gameEvents(io, socket) {
   socket.on("start-game", (roomName) => {
     try {
       Game.start(roomName, io);
-      const room = Rooms.get(roomName);
-      if (!room?.game) return;
       hintTimer(
         roomName,
-        room.game.currentEmojiSet!.answer || "",
+        Rooms.get(roomName).game.currentEmojiSet.answer,
         io,
         Game.updateHint
       );
       sendRoomUpdate(io, roomName);
       io.to(roomName).emit("error-message", "");
     } catch (e) {
-      console.error((e as Error).message);
-      io.to(roomName).emit("error-message", (e as Error).message);
+      console.error(e.message);
+      io.to(roomName).emit("error-message", e.message);
     }
   });
 
@@ -34,7 +31,7 @@ export function gameEvents(io: Server, socket: Socket) {
       io.to(roomName).emit("game-ended");
       sendRoomUpdate(io, roomName);
     } catch (e) {
-      resetRoom(socket, e as Error);
+      resetRoom(socket, e);
     }
   });
 
@@ -42,7 +39,6 @@ export function gameEvents(io: Server, socket: Socket) {
     try {
       const allPassed = Player.passEmojiSet(roomName, socket.id);
       const player = Players.get(roomName, socket.id);
-      if (!player) return;
       io.to(roomName).emit("new-chat-message", {
         text: `${player.name} passed`,
         player: { ...player, emoji: "🙅" },
@@ -54,16 +50,13 @@ export function gameEvents(io: Server, socket: Socket) {
       }
       sendRoomUpdate(io, roomName);
     } catch (e) {
-      resetRoom(socket, e as Error);
+      resetRoom(socket, e);
     }
   });
 
   socket.on("send-game-message", ({ roomName, guess }) => {
     try {
       const room = Rooms.get(roomName);
-      if (!room) {
-        return;
-      }
       if (guess.charAt(0) === "/") {
         chatCommands(io, socket, roomName, guess, true);
       } else {
@@ -82,11 +75,11 @@ export function gameEvents(io: Server, socket: Socket) {
           if (room.settings.mode === "pictionary") {
             Game.nextDrawer(roomName);
           }
-          if (room.settings.mode === GAME_MODE.CLASSIC) {
+          if (room.settings.mode === GAME_MODES.CLASSIC) {
             Game.nextEmojiSet(roomName, io);
             sendRoomUpdate(io, roomName);
           }
-          if (room.settings.mode === GAME_MODE.SKRIBBL) {
+          if (room.settings.mode === GAME_MODES.SKRIBBL) {
             if (
               Object.values(room.players).find(
                 ({ guessed }) => guessed === false
@@ -99,7 +92,7 @@ export function gameEvents(io: Server, socket: Socket) {
             }
           }
         }
-        if (room.settings.mode === GAME_MODE.SKRIBBL) {
+        if (room.settings.mode === GAME_MODES.SKRIBBL) {
           if (correct) {
             socket.emit("new-chat-message", {
               text: guess,
@@ -131,7 +124,9 @@ export function gameEvents(io: Server, socket: Socket) {
         }
       }
     } catch (e) {
-      resetRoom(socket, e as Error);
+      resetRoom(socket, e);
     }
   });
 }
+
+module.exports = gameEvents;

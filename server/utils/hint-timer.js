@@ -1,22 +1,13 @@
-import { Server } from "socket.io";
-import * as Rooms from "../actions/rooms";
+const Rooms = require("../actions/rooms");
 
-export function hintTimer(
-  roomName: string,
-  answer: string,
-  io: Server,
-  updateHint: any
-) {
+function hintTimer(roomName, answer, io, updateHint) {
   try {
     let maxHints = answer.length - Math.floor(answer.length / 2);
     let hintsLeft = maxHints;
     const timer = setInterval(() => {
       const room = Rooms.get(roomName);
-      if (!room?.game) {
-        return;
-      }
       let currentEmojiSet;
-      if (room.game.currentEmojiSet) {
+      if (room.game) {
         currentEmojiSet = room.game.currentEmojiSet.answer;
       }
       if (hintsLeft <= 0 || currentEmojiSet !== answer || !room.game) {
@@ -32,3 +23,5 @@ export function hintTimer(
     console.error(e);
   }
 }
+
+module.exports = hintTimer;

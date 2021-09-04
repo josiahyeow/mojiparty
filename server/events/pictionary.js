@@ -1,20 +1,21 @@
-import { Server, Socket } from "socket.io";
-import * as Game from "../actions/game";
-import { resetRoom, sendRoomUpdate } from "../utils/update-room";
+const Game = require("../actions/game");
+const { resetRoom, sendRoomUpdate } = require("../utils/update-room");
 
-export function pictionaryEvents(io: Server, socket: Socket) {
+function pictionaryEvents(io, socket) {
   socket.on("send-game-emoji", (roomName, emojiSet) => {
     try {
       Game.updateEmojiSet(roomName, emojiSet);
       io.to(roomName).emit("new-game-emoji", emojiSet);
       sendRoomUpdate(io, roomName);
     } catch (e) {
-      resetRoom(socket, e as Error);
+      resetRoom(socket, e);
     }
   });
 
   socket.on("skip-word", (roomName) => {
-    Game.skipWord(roomName, io);
+    Game.skipWord(roomName);
     sendRoomUpdate(io, roomName);
   });
 }
+
+module.exports = pictionaryEvents;

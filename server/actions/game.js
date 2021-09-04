@@ -1,53 +1,30 @@
-import { shuffle } from "lodash";
-import { get, update, getEmojis, EmojiSet } from "./rooms";
-import { GameEvent, updateGameEvent } from "./event";
-import * as Settings from "./settings";
-import * as Players from "./players";
+var _ = require("lodash");
+const { get, update, getEmojis } = require("./rooms");
+const { updateGameEvent } = require("./event");
+const Settings = require("./settings");
+const Players = require("./players");
 
-import { GAME_MODE } from "../utils/constants";
-import { hintTimer } from "../utils/hint-timer";
-import { roundTimer } from "../utils/round-timer";
-import { Server } from "socket.io";
-import type { Player } from "./player";
-import type { Categories } from "./settings";
+const { GAME_MODES } = require("../utils/constants");
+const hintTimer = require("../utils/hint-timer");
+const roundTimer = require("../utils/round-timer");
 
-export type Game = {
-  emojiSets: EmojiSet[];
-  currentEmojiSet: EmojiSet | null;
-  previousEmojiSet: EmojiSet | null;
-  scoreLimit: number;
-  lastEvent: GameEvent;
-  round: number;
-  top5: Player[];
-  chat: boolean;
-  winners: Player[] | null;
-  timeLeft: number;
-  drawer: string;
-  drawers: string[];
-};
-
-function filterEmojis(selectedCategories: Categories) {
+function filterEmojis(selectedCategories) {
   const emojis = getEmojis();
-  let gameEmojiSets: any = [];
-  let categories: string[] = [];
+  let gameEmojiSets = [];
+  let categories = [];
   Object.keys(selectedCategories).map((category) => {
-    selectedCategories[category as keyof Categories].include &&
-      categories.push(category as keyof Categories);
+    selectedCategories[category].include && categories.push(category);
   });
   categories.map((category) => {
-    gameEmojiSets = [
-      ...gameEmojiSets,
-      ...emojis.emojiSets[category as keyof Categories],
-    ];
+    gameEmojiSets = [...gameEmojiSets, ...emojis.emojiSets[category]];
   });
-  gameEmojiSets = shuffle(gameEmojiSets);
+  gameEmojiSets = _.shuffle(gameEmojiSets);
   return gameEmojiSets;
 }
 
-function start(roomName: string, io: Server) {
+function start(roomName, io) {
   try {
     const room = get(roomName);
-    if (!room) return;
     const categorySelected = Object.values(
       room.settings.selectedCategories
     ).find((category) => category.include === true);
@@ -62,16 +39,10 @@ function start(roomName: string, io: Server) {
       round: 0,
       top5: Object.values(room.players).slice(0, 5),
       chat: true,
-      currentEmojiSet: null,
-      previousEmojiSet: null,
-      timeLeft: -1,
-      winners: null,
-      drawer: "",
-      drawers: [],
     };
     const mode = room.settings.mode;
     nextEmojiSet(roomName, io);
-    if (mode === GAME_MODE.PICTIONARY) {
+    if (mode === GAME_MODES.PICTIONARY) {
       initialiseDrawers(roomName);
       nextDrawer(roomName);
     }
@@ -82,15 +53,14 @@ function start(roomName: string, io: Server) {
   }
 }
 
-function end(roomName: string) {
+function end(roomName) {
   const room = get(roomName);
-  if (!room) return;
   Players.resetPoints(roomName);
   Players.resetPass(roomName);
-  if (Settings.getMode(roomName) === GAME_MODE.SKRIBBL) {
+  if (Settings.getMode(roomName) === GAME_MODES.SKRIBBL) {
     Players.resetGuessed(roomName);
   }
-  if (room.settings.mode === GAME_MODE.PICTIONARY) {
+  if (room.settings.mode === GAME_MODES.PICTIONARY) {
     Players.resetDrawer(roomName);
   }
   if (room) {
@@ -99,9 +69,8 @@ function end(roomName: string) {
   update(room);
 }
 
-function getWinners(roomName: string) {
+function getWinners(roomName) {
   const room = get(roomName);
-  if (!room?.game) return;
   const winners = Object.values(room.players)
     .sort((a, b) => {
       if (a.score > b.score) return -1;
@@ -114,11 +83,9 @@ function getWinners(roomName: string) {
   return winners;
 }
 
-function updateTimer(roomName: string, timeLeft: number) {
+function updateTimer(roomName, timeLeft) {
   try {
     const room = get(roomName);
-    if (!room?.game) return;
-
     if (room.game) {
       room.game.timeLeft = timeLeft;
       update(room);
@@ -129,7 +96,7 @@ function updateTimer(roomName: string, timeLeft: number) {
   }
 }
 
-function makeHint(emojiSet: EmojiSet) {
+function makeHint(emojiSet) {
   if (!emojiSet.showLetters) {
     emojiSet.showLetters = [];
   }
@@ -138,7 +105,7 @@ function makeHint(emojiSet: EmojiSet) {
     Math.random() * Math.floor(answerLetters.length)
   );
   !emojiSet.firstHint && emojiSet.showLetters.push(randomLetter);
-  let hintLetters: string[] = [];
+  let hintLetters = [];
   answerLetters.map((letter, index) => {
     if (
       (emojiSet.showLetters.includes(index) && !emojiSet.firstHint) ||
@@ -154,29 +121,27 @@ function makeHint(emojiSet: EmojiSet) {
   return emojiSet;
 }
 
-function updateHint(roomName: string) {
+function updateHint(roomName) {
   try {
     const room = get(roomName);
-    if (!room?.game) return;
-    const emojiSet = room.game.currentEmojiSet;
-    if (!emojiSet) return;
-    const hint = makeHint(emojiSet).hint;
-    update(room);
-    return hint;
+    if (room.game) {
+      const emojiSet = room.game.currentEmojiSet;
+      const hint = makeHint(emojiSet).hint;
+      update(room);
+      return hint;
+    }
   } catch (e) {
     throw e;
   }
 }
 
-function nextEmojiSet(roomName: string, io: Server) {
+function nextEmojiSet(roomName, io) {
   Players.resetPass(roomName);
-  if (Settings.getMode(roomName) === GAME_MODE.SKRIBBL) {
+  if (Settings.getMode(roomName) === GAME_MODES.SKRIBBL) {
     Players.resetGuessed(roomName);
   }
   const room = get(roomName);
-  if (!room?.game) return;
   const randomEmojiSet = room.game.emojiSets.pop();
-  if (!randomEmojiSet) return;
   randomEmojiSet.firstHint = true;
   const emojiSet = makeHint(randomEmojiSet);
 
@@ -188,14 +153,12 @@ function nextEmojiSet(roomName: string, io: Server) {
       answer: "",
       hint: "",
       category: "",
-      showLetters: [],
-      firstHint: false,
     };
   }
-  if (Settings.getMode(roomName) === GAME_MODE.PICTIONARY) {
+  if (Settings.getMode(roomName) === GAME_MODES.PICTIONARY) {
     emojiSet.emojiSet = "";
   }
-  if (Settings.getMode(roomName) === GAME_MODE.SKRIBBL) {
+  if (Settings.getMode(roomName) === GAME_MODES.SKRIBBL) {
     room.game.round += 1;
     const leadingPlayer = Object.values(room.players).reduce((leader, player) =>
       leader.score > player.score ? leader : player
@@ -219,17 +182,18 @@ function nextEmojiSet(roomName: string, io: Server) {
   return emojiSet;
 }
 
-function checkGuess(roomName: string, guess: string) {
+function checkGuess(roomName, guess) {
   const ALPHA_NUM_REGEX = /[^a-zA-Z0-9]/g;
   try {
     let answer;
     let correct = false;
     const room = get(roomName);
-    if (!room?.game || !room?.game.currentEmojiSet) return;
-    answer = room.game.currentEmojiSet.answer;
-    correct =
-      guess.toLowerCase().replace(ALPHA_NUM_REGEX, "") ===
-      answer.toLowerCase().replace(ALPHA_NUM_REGEX, "");
+    if (room.game) {
+      answer = room.game.currentEmojiSet.answer;
+      correct =
+        guess.toLowerCase().replace(ALPHA_NUM_REGEX, "") ===
+        answer.toLowerCase().replace(ALPHA_NUM_REGEX, "");
+    }
     return correct;
   } catch (e) {
     throw e;
@@ -238,31 +202,27 @@ function checkGuess(roomName: string, guess: string) {
 
 // PICTIONARY ACTIONS
 
-function nextRound(roomName: string) {
+function nextRound(roomName) {
   const room = get(roomName);
-  if (!room?.game) return;
   room.game.round += 1;
   initialiseDrawers(roomName);
   nextDrawer(roomName);
   update(room);
 }
 
-function initialiseDrawers(roomName: string) {
+function initialiseDrawers(roomName) {
   const room = get(roomName);
-  if (!room?.game?.drawer) return;
   room.game.drawers = Object.keys(room.players);
   update(room);
 }
 
-function nextDrawer(roomName: string) {
+function nextDrawer(roomName) {
   const room = get(roomName);
-  if (!room?.game) return;
   const currentDrawer = room.game.drawer;
   if (currentDrawer) room.players[currentDrawer].drawer = false;
   const drawers = room.game.drawers;
   if (drawers.length > 0) {
     const nextDrawer = room.game.drawers.pop();
-    if (!nextDrawer) return;
     room.game.drawer = nextDrawer;
     room.players[nextDrawer].drawer = true;
   } else {
@@ -271,21 +231,19 @@ function nextDrawer(roomName: string) {
   update(room);
 }
 
-function updateEmojiSet(roomName: string, emojiSet: any) {
+function updateEmojiSet(roomName, emojiSet) {
   const room = get(roomName);
-  if (!room?.game || !room?.game.currentEmojiSet) return;
-
   updateGameEvent(roomName, "updateEmojiSet");
   room.game.currentEmojiSet.emojiSet = emojiSet;
   update(room);
 }
 
-function skipWord(roomName: string, io: Server) {
+function skipWord(roomName) {
   updateGameEvent(roomName, "skip word");
-  nextEmojiSet(roomName, io);
+  nextEmojiSet(roomName);
 }
 
-export {
+module.exports = {
   start,
   end,
   nextEmojiSet,

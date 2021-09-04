@@ -1,12 +1,12 @@
-import { getAll, update } from "../actions/rooms";
-import {
+const { getAll, update } = require("../actions/rooms");
+const {
   DEFAULT_SCORE_LIMIT,
   DEFAULT_SELECTED_CATEGORIES,
-  GAME_MODE,
+  GAME_MODES,
   DEFAULT_TIME_PER_ROUND,
-} from "../utils/constants";
+} = require("../utils/constants");
 
-const create = (roomName: string) => {
+const create = (roomName) => {
   try {
     const rooms = getAll();
     if (roomName in rooms) {
@@ -18,15 +18,12 @@ const create = (roomName: string) => {
         settings: {
           scoreLimit: DEFAULT_SCORE_LIMIT,
           selectedCategories: DEFAULT_SELECTED_CATEGORIES,
-          mode: GAME_MODE.SKRIBBL,
+          mode: GAME_MODES.SKRIBBL,
           timer: DEFAULT_TIME_PER_ROUND,
-          chat: true,
-          rounds: 10,
         },
-        game: null,
         lastEvent: { type: "Room created" },
       };
-      update(newRoom);
+      update(roomName, newRoom);
       return rooms[roomName];
     }
   } catch (e) {
