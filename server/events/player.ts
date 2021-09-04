@@ -1,7 +1,8 @@
-const Players = require("../actions/players");
-const { sendRoomUpdate, resetRoom } = require("../utils/update-room");
+import { Server, Socket } from "socket.io";
+import * as Players from "../actions/players";
+import { sendRoomUpdate, resetRoom } from "../utils/update-room";
 
-function playerEvents(io, socket) {
+function playerEvents(io: Server, socket: Socket) {
   socket.on("player-joined", ({ room, player }) => {
     const roomName = room.name;
     const roomPassword = room.password || "";
@@ -26,13 +27,17 @@ function playerEvents(io, socket) {
       }
       sendRoomUpdate(io, roomName);
     } catch (e) {
-      resetRoom(socket, e);
+      resetRoom(socket, e as Error);
     }
   });
 
-  socket.on("player-left", (roomName, player) => {
+  socket.on("player-left", ({ roomName, player }) => {
     try {
-      const { chatChanged, chat } = Players.remove(roomName, socket.id);
+      const result = Players.remove(roomName, socket.id);
+      if (!result) {
+        return;
+      }
+      const { chatChanged, chat } = result;
       socket.leave(roomName);
       if (chat) {
         io.to(roomName).emit("new-chat-message", {
@@ -48,7 +53,7 @@ function playerEvents(io, socket) {
       }
       sendRoomUpdate(io, roomName);
     } catch (e) {
-      resetRoom(socket, e);
+      resetRoom(socket, e as Error);
     }
   });
 
@@ -56,9 +61,9 @@ function playerEvents(io, socket) {
     try {
       Players.removeFromAllRooms(socket);
     } catch (e) {
-      resetRoom(socket, e);
+      resetRoom(socket, e as Error);
     }
   });
 }
 
-module.exports = playerEvents;
+export { playerEvents };

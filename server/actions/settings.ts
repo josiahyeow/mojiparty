@@ -1,20 +1,26 @@
-const { get, update } = require("../actions/rooms");
-const { GAME_MODES } = require("../utils/constants");
-const { updateGameEvent } = require("./event");
+import { get, update } from "../actions/rooms";
+import { GAME_MODE } from "../utils/constants";
+import { updateGameEvent } from "./event";
 
-function getMode(roomName) {
+function getMode(roomName: string) {
   const room = get(roomName);
+  if (!room) {
+    return;
+  }
   return room.settings.mode;
 }
 
-function setGameMode(roomName, mode) {
+function setGameMode(roomName: string, mode: string) {
   const room = get(roomName);
-  room.settings.mode = mode;
-  if (mode === GAME_MODES.CLASSIC) {
+  if (!room) {
+    return;
+  }
+  room.settings.mode = mode as GAME_MODE;
+  if (mode === GAME_MODE.CLASSIC) {
     room.settings.timer = 0;
     room.settings.rounds = 0;
   }
-  if (mode === GAME_MODES.SKRIBBL) {
+  if (mode === GAME_MODE.SKRIBBL) {
     if (room.settings.rounds === 0) {
       room.settings.rounds = 10;
     }
@@ -25,43 +31,61 @@ function setGameMode(roomName, mode) {
   update(room);
 }
 
-function getTimer(roomName) {
+function getTimer(roomName: string) {
   const room = get(roomName);
+  if (!room) {
+    return;
+  }
   return room.settings.timer;
 }
 
-function setTimer(roomName, time) {
+function setTimer(roomName: string, time: number) {
   const room = get(roomName);
+  if (!room) {
+    return;
+  }
   room.settings.timer = time;
   update(room);
 }
 
-function getRounds(roomName) {
+function getRounds(roomName: string) {
   const room = get(roomName);
+  if (!room) {
+    return;
+  }
   return room.settings.rounds;
 }
 
-function setRounds(roomName, rounds) {
+function setRounds(roomName: string, rounds: number) {
   const room = get(roomName);
+  if (!room) {
+    return;
+  }
   room.settings.rounds = rounds;
   update(room);
 }
 
-const updateScoreLimit = (roomName, newScoreLimit) => {
+const updateScoreLimit = (roomName: string, newScoreLimit: string) => {
   const room = get(roomName);
+  if (!room) {
+    return;
+  }
   room.settings.scoreLimit = Number(newScoreLimit);
   updateGameEvent(roomName, "score-limit-updated");
   update(room);
 };
 
-const updateCategories = (roomName, updatedCategories) => {
+const updateCategories = (roomName: string, updatedCategories: any) => {
   const room = get(roomName);
+  if (!room) {
+    return;
+  }
   room.settings.selectedCategories = updatedCategories;
   updateGameEvent(roomName, "categories-updated");
   update(room);
 };
 
-module.exports = {
+export {
   getMode,
   setGameMode,
   updateScoreLimit,

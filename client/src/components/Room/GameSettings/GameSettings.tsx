@@ -141,7 +141,7 @@ const GameSettings = () => {
     window.dispatchEvent(new Event('resize'))
   }, [settings, players])
 
-  const GAME_MODES = [
+  const GAME_MODE = [
     {
       name: 'Party',
       value: 'skribbl',
@@ -289,14 +289,14 @@ const GameSettings = () => {
               disabled={!isHost}
               title={!isHost ? ONLY_HOST_MESSAGE : ''}
             >
-              {GAME_MODES.map(({ name, value }) => (
+              {GAME_MODE.map(({ name, value }) => (
                 <option key={value} value={value}>
                   {name}
                 </option>
               ))}
             </Select> */}
                 <CategorySelector>
-                  {GAME_MODES.map(({ name, value, icon, description }) => (
+                  {GAME_MODE.map(({ name, value, icon, description }) => (
                     <Category>
                       <CategoryCheckbox
                         type="radio"
@@ -458,7 +458,7 @@ const GameSettings = () => {
       </>
     ),
     [
-      GAME_MODES,
+      GAME_MODE,
       ROUNDS,
       ROUND_TIMERS,
       SCORE_LIMITS,

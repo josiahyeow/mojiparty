@@ -1,6 +1,7 @@
-const Rooms = require("../actions/rooms");
+import { Server, Socket } from "socket.io";
+import * as Rooms from "../actions/rooms";
 
-function helperEvents(io, socket) {
+export function helperEvents(io: Server, socket: Socket) {
   socket.on("repair-room", (room) => {
     Rooms.add(room);
     io.to(room.name).emit("room-repaired");
@@ -10,5 +11,3 @@ function helperEvents(io, socket) {
     Rooms.killAll();
   });
 }
-
-module.exports = helperEvents;
