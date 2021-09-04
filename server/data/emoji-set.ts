@@ -1,21 +1,33 @@
-const { GoogleSpreadsheet } = require("google-spreadsheet");
-const { decryptJSON } = require("./crypto");
+import { GoogleSpreadsheet } from "google-spreadsheet";
+import { decryptJSON } from "./crypto";
+
+import hash from "./hash.json";
 
 const SPREADSHEET_ID = "1BzqqZPJjaGtr8wEXL-rcgIr5PmyQewiA6TOE0MbglIg";
 
-function parseRows(rows) {
-  let emojiSets = [];
-  rows.forEach(({ category, emojiSet, answer }) => {
-    if (category && emojiSet && answer)
-      emojiSets.push({ category, emojiSet, answer });
-  });
+function parseRows(rows: any) {
+  let emojiSets: any = [];
+  rows.forEach(
+    ({
+      category,
+      emojiSet,
+      answer,
+    }: {
+      category: string;
+      emojiSet: string;
+      answer: string;
+    }) => {
+      if (category && emojiSet && answer)
+        emojiSets.push({ category, emojiSet, answer });
+    }
+  );
   return emojiSets;
 }
 
 async function fetchEmojis() {
   try {
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-    await doc.useServiceAccountAuth(decryptJSON(require("./hash.json")));
+    await doc.useServiceAccountAuth(decryptJSON(hash));
     await doc.loadInfo();
 
     const SHEET_IDS = {
@@ -75,4 +87,4 @@ async function fetchEmojis() {
   }
 }
 
-module.exports = { fetchEmojis };
+export { fetchEmojis };
