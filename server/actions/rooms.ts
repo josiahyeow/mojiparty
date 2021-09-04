@@ -100,7 +100,7 @@ async function create(roomName: string, roomPassword = "") {
         settings: {
           scoreLimit: DEFAULT_SCORE_LIMIT,
           selectedCategories: DEFAULT_SELECTED_CATEGORIES,
-          mode: GAME_MODE.CLASSIC,
+          mode: GAME_MODE.SKRIBBL,
           timer: DEFAULT_TIME_PER_ROUND,
           rounds: DEFAULT_ROUNDS,
           chat: true,
