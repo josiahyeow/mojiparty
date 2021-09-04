@@ -1,7 +1,7 @@
 {
-  "name": "emojicon",
+  "name": "mojiparty",
   "version": "1.0.0",
-  "repository": "git@github.com:josiahyeow/emojicon.git",
+  "repository": "git@github.com:josiahyeow/mojiparty.git",
   "author": "Josiah Yeow <josiahyeow.dev@gmail.com>",
   "license": "MIT",
   "private": true,

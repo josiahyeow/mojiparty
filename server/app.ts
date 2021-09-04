@@ -70,6 +70,6 @@ app.use(function (req, res, next) {
 });
 
 server.listen(port, () => {
-  console.log(`Listening on port ${port} ${process.cwd()}`);
+  console.log(`Listening on port ${port}`);
   fetchEmojisFromGoogleSheets();
 });
