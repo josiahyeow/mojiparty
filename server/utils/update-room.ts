@@ -1,7 +1,8 @@
-const logRoom = require("./log-room");
-const { db } = require("../firebase");
+import { Server, Socket } from "socket.io";
+import { logRoom } from "./log-room";
+import { db } from "../firebase";
 
-function sendRoomUpdate(io, roomName, item = "") {
+function sendRoomUpdate(io: Server, roomName: string, item = "") {
   try {
     db.ref("rooms/" + roomName)
       .get()
@@ -20,9 +21,9 @@ function sendRoomUpdate(io, roomName, item = "") {
   }
 }
 
-function resetRoom(socket, error) {
+function resetRoom(socket: Socket, error: Error) {
   console.error(error);
   socket.emit("room-disconnected", { error: error.message });
 }
 
-module.exports = { sendRoomUpdate, resetRoom };
+export { sendRoomUpdate, resetRoom };

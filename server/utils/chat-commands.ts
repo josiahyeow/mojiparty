@@ -1,9 +1,17 @@
-const Player = require("../actions/player");
-const Players = require("../actions/players");
-const Settings = require("../actions/settings");
-const { sendRoomUpdate } = require("../utils/update-room");
+import { Server, Socket } from "socket.io";
 
-const chatCommands = (io, socket, roomName, message, inGame) => {
+import * as Player from "../actions/player";
+import * as Players from "../actions/players";
+import * as Settings from "../actions/settings";
+import { sendRoomUpdate } from "../utils/update-room";
+
+export const chatCommands = (
+  io: Server,
+  socket: Socket,
+  roomName: string,
+  message: string,
+  inGame: boolean
+) => {
   if (Player.isHost(roomName, socket.id)) {
     const [command, ...value] = message.split(" ");
     if (command === "/mode" && !inGame) {
@@ -17,10 +25,6 @@ const chatCommands = (io, socket, roomName, message, inGame) => {
           system: true,
         });
       }
-    } else if (command === "/timer") {
-      Settings.setTimer(roomName, value);
-    } else if (command === "/rounds") {
-      Settings.setRounds(roomName, value);
     } else if (command === "/kick") {
       const playerName = value.join(" ");
       if (playerName) {
@@ -66,5 +70,3 @@ const chatCommands = (io, socket, roomName, message, inGame) => {
     });
   }
 };
-
-module.exports = chatCommands;

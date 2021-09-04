@@ -1,7 +1,13 @@
-const Rooms = require("./rooms");
-const { updateGameEvent } = require("./event");
+import * as Rooms from "./rooms";
+import { Room } from "./rooms";
+import { updateGameEvent } from "./event";
+import { Socket } from "socket.io";
 
-function add({ roomName, roomPassword = "" }, playerId, { name, emoji }) {
+function add(
+  { roomName, roomPassword = "" }: { roomName: string; roomPassword?: string },
+  playerId: string,
+  { name, emoji }: { name: string; emoji: string }
+) {
   try {
     const room = Rooms.get(roomName);
     if (room?.password !== roomPassword) {
@@ -24,6 +30,8 @@ function add({ roomName, roomPassword = "" }, playerId, { name, emoji }) {
         score: 0,
         pass: false,
         host: false,
+        guessed: false,
+        drawer: false,
       };
     }
     setHost(room);
@@ -53,15 +61,18 @@ function add({ roomName, roomPassword = "" }, playerId, { name, emoji }) {
   }
 }
 
-function get(roomName, playerId) {
+function get(roomName: string, playerId: string) {
   const room = Rooms.get(roomName);
+  if (!room) return;
   return room.players[playerId];
 }
 
-function remove(roomName, playerId) {
+function remove(roomName: string, playerId: string) {
   try {
     const room = Rooms.get(roomName);
+    if (!room) return;
     const player = get(roomName, playerId);
+    if (!player) return;
     delete room.players[playerId];
     if (player.host) setHost(room);
 
@@ -81,13 +92,14 @@ function remove(roomName, playerId) {
     Rooms.update(room);
     return { players: room.players, chatChanged, chat: room.settings.chat };
   } catch (e) {
-    return true;
+    return;
   }
 }
 
-function kick(roomName, playerName) {
+function kick(roomName: string, playerName: string) {
   try {
-    const players = Rooms.get(roomName).players;
+    const players = Rooms.get(roomName)?.players;
+    if (!players) return;
     const playerId = Object.keys(players).find(
       (key) => players[key].name === playerName
     );
@@ -102,10 +114,10 @@ function kick(roomName, playerName) {
   }
 }
 
-const removeFromAllRooms = (socket) => {
+const removeFromAllRooms = (socket: Socket) => {
   const rooms = Rooms.getAll();
-  const getUserRooms = (socket) => {
-    return Object.entries(rooms).reduce((names, [name, room]) => {
+  const getUserRooms = (socket: Socket) => {
+    return Object.entries(rooms).reduce((names: string[], [name, room]) => {
       if (room.players[socket.id] != null) names.push(name);
       return names;
     }, []);
@@ -124,13 +136,14 @@ const removeFromAllRooms = (socket) => {
   }
 };
 
-function setHost(room) {
+function setHost(room: Room) {
   const hostExists = Object.values(room.players).find(
     (player) => player.host === true
   );
   const randomPlayerId = Object.keys(room.players).pop();
+  if (!randomPlayerId) return;
   if (
-    (!hostExists || room.players.length === 1) &&
+    (!hostExists || Object.keys(room.players).length === 1) &&
     room.players[randomPlayerId] != null
   ) {
     room.players[randomPlayerId].host = true;
@@ -138,24 +151,29 @@ function setHost(room) {
   Rooms.update(room);
 }
 
-function resetPass(roomName) {
+function resetPass(roomName: string) {
   const room = Rooms.get(roomName);
+  if (!room) return;
   Object.values(room.players).forEach((player) => {
     player.pass = false;
   });
   Rooms.update(room);
 }
 
-function resetGuessed(roomName) {
+function resetGuessed(roomName: string) {
   const room = Rooms.get(roomName);
+  if (!room) return;
+
   Object.values(room.players).forEach((player) => {
     player.guessed = false;
   });
   Rooms.update(room);
 }
 
-function resetPoints(roomName) {
+function resetPoints(roomName: string) {
   const room = Rooms.get(roomName);
+  if (!room) return;
+
   room &&
     Object.keys(room.players).forEach((playerId) => {
       room.players[playerId].score = 0;
@@ -163,15 +181,17 @@ function resetPoints(roomName) {
   Rooms.update(room);
 }
 
-function resetDrawer(roomName) {
+function resetDrawer(roomName: string) {
   const room = Rooms.get(roomName);
+  if (!room) return;
+
   Object.values(room.players).forEach((player) => {
     player.drawer = false;
   });
   Rooms.update(room);
 }
 
-module.exports = {
+export {
   add,
   get,
   remove,

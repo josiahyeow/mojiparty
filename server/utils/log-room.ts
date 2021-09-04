@@ -1,4 +1,6 @@
-function logRoom(room) {
+import { Room } from "../actions/rooms";
+
+export function logRoom(room: Room) {
   const lobbyPlayers =
     room.players &&
     Object.keys(room.players).map(
@@ -34,5 +36,3 @@ function logRoom(room) {
     }
   }
 }
-
-module.exports = logRoom;

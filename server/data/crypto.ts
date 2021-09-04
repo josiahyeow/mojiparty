@@ -1,12 +1,12 @@
-const crypto = require("crypto");
+import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 
 const ALGORITHM = "aes-256-ctr";
-const SECRET_KEY = process.env.SECRET_KEY;
-const IV = crypto.randomBytes(16);
+const SECRET_KEY = process.env.SECRET_KEY!;
+const IV = randomBytes(16);
 
-const encryptJSON = (json) => {
+const encryptJSON = (json: JSON) => {
   const text = JSON.stringify(json);
-  const cipher = crypto.createCipheriv(ALGORITHM, SECRET_KEY, IV);
+  const cipher = createCipheriv(ALGORITHM, SECRET_KEY, IV);
   const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
   return {
     iv: IV.toString("hex"),
@@ -14,8 +14,8 @@ const encryptJSON = (json) => {
   };
 };
 
-const decryptJSON = (hash) => {
-  const decipher = crypto.createDecipheriv(
+const decryptJSON = (hash: { iv: string; content: string }) => {
+  const decipher = createDecipheriv(
     ALGORITHM,
     SECRET_KEY,
     Buffer.from(hash.iv, "hex")
@@ -27,4 +27,4 @@ const decryptJSON = (hash) => {
   return JSON.parse(decrypted.toString());
 };
 
-module.exports = { decryptJSON };
+export { decryptJSON };

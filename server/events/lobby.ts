@@ -1,10 +1,12 @@
+import { Server, Socket } from "socket.io";
+
 const Rooms = require("../actions/rooms");
 const Players = require("../actions/players");
 const Settings = require("../actions/settings");
 const chatCommands = require("../utils/chat-commands");
 const { sendRoomUpdate, resetRoom } = require("../utils/update-room");
 
-function lobbyEvents(io, socket) {
+export function lobbyEvents(io: Server, socket: Socket) {
   socket.on("update-setting", (roomName, setting, value) => {
     try {
       if (setting === "scoreLimit") {
@@ -46,5 +48,3 @@ function lobbyEvents(io, socket) {
     }
   });
 }
-
-module.exports = lobbyEvents;
