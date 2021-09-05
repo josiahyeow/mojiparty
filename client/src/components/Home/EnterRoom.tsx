@@ -61,7 +61,7 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
     if (response.ok) {
       handleJoinRoom(false)
     } else {
-      setError(`Room ${roomName} already exists. Please choose another name.`)
+      handleJoinRoom()
     }
   }
 
@@ -128,16 +128,9 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
             type="button"
             onClick={() => handleSubmit('create')}
           >
-            Start Party
+            Join or Start Party
           </Button>
         )}
-        <Button
-          id="join-room-button"
-          type="button"
-          onClick={() => handleSubmit('join')}
-        >
-          Join Party
-        </Button>
       </Form>
     </Box>
   )
