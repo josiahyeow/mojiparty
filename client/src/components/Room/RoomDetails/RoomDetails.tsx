@@ -20,6 +20,7 @@ const Address = styled.div`
 const RoomDetails = () => {
   const { room, player } = useContext(RoomContext) as RoomContextProps
   const [copySuccess, setCopySuccess] = useState('💌 Invite to party')
+  const [isPartyNameHidden, setIsPartyNameHidden] = useState(false)
 
   async function copyToClipboard(e) {
     ReactGA.event({
@@ -40,9 +41,16 @@ const RoomDetails = () => {
       action: 'Hide party name',
     })
 
-    localStorage.setItem('secret-party', JSON.stringify({ room, player }))
+    if (isPartyNameHidden) {
+      window.history.pushState('room', 'mojiparty', room.name)
+      localStorage.removeItem('secret-party')
+      setIsPartyNameHidden(false)
+      return
+    }
 
+    localStorage.setItem('secret-party', JSON.stringify({ room, player }))
     window.history.pushState('room', 'mojiparty', '/secret-party')
+    setIsPartyNameHidden(true)
   }
 
   return (
@@ -51,7 +59,11 @@ const RoomDetails = () => {
       <Details>
         <Address>
           <Button onClick={copyToClipboard}>{emoji(copySuccess)}</Button>
-          <Button onClick={hidePartyName}>{emoji('🤫')} Hide party name</Button>
+          <Button onClick={hidePartyName}>
+            {isPartyNameHidden
+              ? emoji('🧐 Show party name')
+              : emoji('🤫 Hide party name')}
+          </Button>
         </Address>
       </Details>
     </Box>
