@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { create, roomExists } from '../../utils/api'
 import { Box, Label, Input, Button, H2 } from '../Styled/Styled'
 import EmojiPicker, { getRandomPlayerEmoji } from './EmojiPicker'
+import emoji from '../../utils/emoji'
 
 const Form = styled.form`
   display: grid;
@@ -100,7 +101,7 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
       <Form>
         <H2>Play now</H2>
         {error && <Error>{error}</Error>}
-        <Label htmlFor="playername-input">Player</Label>
+        <Label htmlFor="playername-input">{emoji('🥳')} Player</Label>
         <Player>
           <EmojiPicker
             playerEmoji={playerEmoji}
@@ -114,11 +115,11 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
           />
         </Player>
 
-        <Label htmlFor="roomname-input">Room</Label>
+        <Label htmlFor="roomname-input">{emoji('🎉')} Party name</Label>
         <Input
           id="roomname-input"
           value={roomName}
-          placeholder="Enter room name"
+          placeholder="Enter party name"
           onChange={(event) => setRoomName(event.target.value)}
         ></Input>
         {!room && (
@@ -127,7 +128,7 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
             type="button"
             onClick={() => handleSubmit('create')}
           >
-            Create Room
+            Start Party
           </Button>
         )}
         <Button
@@ -135,7 +136,7 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
           type="button"
           onClick={() => handleSubmit('join')}
         >
-          Join Room
+          Join Party
         </Button>
       </Form>
     </Box>
