@@ -6,12 +6,6 @@ import { create, roomExists } from '../../utils/api'
 import { Box, Label, Input, Button, H2 } from '../Styled/Styled'
 import EmojiPicker, { getRandomPlayerEmoji } from './EmojiPicker'
 
-const Optional = styled.span`
-  font-weight: normal !important;
-  font-style: normal !important;
-  font-family: sans-serif;
-`
-
 const Form = styled.form`
   display: grid;
   grid-template-rows: 1fr;
@@ -126,15 +120,6 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
           value={roomName}
           placeholder="Enter room name"
           onChange={(event) => setRoomName(event.target.value)}
-        ></Input>
-        <Label htmlFor="roomnpassword-input">
-          Password <Optional>(if required)</Optional>
-        </Label>
-        <Input
-          id="roomnpassword-input"
-          value={roomPassword}
-          placeholder="Enter room password"
-          onChange={(event) => setRoomPassword(event.target.value)}
         ></Input>
         {!room && (
           <Button

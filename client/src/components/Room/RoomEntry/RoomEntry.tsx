@@ -11,6 +11,19 @@ const RoomEntry = (props: any) => {
   const player = { name: playerName, emoji: playerEmoji }
   const room = { name: roomName, password: roomPassword }
 
+  if (roomName === 'secret-party') {
+    const secretRoom = localStorage.getItem('secret-party')
+
+    if (secretRoom) {
+      const { room, player } = JSON.parse(secretRoom)
+      return (
+        <RoomProvider player={player} room={room}>
+          <Room />
+        </RoomProvider>
+      )
+    }
+  }
+
   if (playerName && playerEmoji) {
     return (
       <RoomProvider player={player} room={room}>

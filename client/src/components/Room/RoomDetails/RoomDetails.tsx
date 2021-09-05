@@ -1,9 +1,10 @@
-import React, { useState, useRef, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
 import emoji from '.././../../utils/emoji'
-import { H3, Box, Input, Button } from '../../Styled/Styled'
+import { H3, Box, Button } from '../../Styled/Styled'
 import { RoomContext, RoomContextProps } from '../../providers/RoomProvider'
+import copy from 'copy-to-clipboard'
 
 const Details = styled.div`
   display: grid;
@@ -12,85 +13,46 @@ const Details = styled.div`
 `
 
 const Address = styled.div`
-  display: flex;
-`
-
-const RoomNameInput = styled(Input)`
-  border-radius: 6px 0px 0px 6px;
-  border: none;
-  min-width: 1em;
-  &:focus,
-  &:hover {
-    border: none;
-    background-color: #f1f4f7;
-  }
-`
-
-const CopyButton = styled(Button)`
-  border-radius: 0px 6px 6px 0px;
-  min-width: fit-content;
+  display: grid;
+  grid-gap: 1em;
 `
 
 const RoomDetails = () => {
-  const { room } = useContext(RoomContext) as RoomContextProps
-  const [copySuccess, setCopySuccess] = useState('📋 Copy')
-  const [passwordShown, setPasswordShown] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const { room, player } = useContext(RoomContext) as RoomContextProps
+  const [copySuccess, setCopySuccess] = useState('💌 Invite to party')
 
   async function copyToClipboard(e) {
     ReactGA.event({
       category: 'Lobby',
       action: 'Copy room URL',
     })
-    if (inputRef && inputRef.current) {
-      inputRef.current.select()
-    }
-    document.execCommand('copy')
-    // This is just personal preference.
-    // I prefer to not show the whole text area selected.
-    e.target.focus()
-    setCopySuccess('✅ Copied!')
+
+    copy(`${window.location.origin}/${room.name}`)
+
+    setCopySuccess('✅ Link copied!')
     await new Promise((resolve) => setTimeout(() => resolve(true), 2000))
-    setCopySuccess('📋 Copy')
+    setCopySuccess('📋 Invite')
   }
 
-  async function showPassword() {
-    setPasswordShown(true)
-    await new Promise((resolve) => setTimeout(() => resolve(true), 2000))
-    setPasswordShown(false)
+  function hidePartyName() {
+    ReactGA.event({
+      category: 'Lobby',
+      action: 'Hide party name',
+    })
+
+    localStorage.setItem('secret-party', JSON.stringify({ room, player }))
+
+    window.history.pushState('room', 'mojiparty', '/secret-party')
   }
 
   return (
     <Box>
-      <H3>Share Room</H3>
+      <H3>Party controls</H3>
       <Details>
         <Address>
-          <RoomNameInput
-            ref={inputRef}
-            value={`${window.location.href}`}
-            data-testid={'room-name'}
-            readOnly
-          />
-          {document.queryCommandSupported('copy') && (
-            <CopyButton onClick={copyToClipboard}>
-              {emoji(copySuccess)}
-            </CopyButton>
-          )}
+          <Button onClick={copyToClipboard}>{emoji(copySuccess)}</Button>
+          <Button onClick={hidePartyName}>{emoji('🤫')} Hide party name</Button>
         </Address>
-        {room.roomPassword && (
-          <Address>
-            <RoomNameInput
-              value={
-                passwordShown
-                  ? room.roomPassword
-                  : room.roomPassword.replace(/./g, '*')
-              }
-            />
-            <CopyButton onClick={showPassword}>
-              {emoji(passwordShown ? '🔓' : '🔒')} Show
-            </CopyButton>
-          </Address>
-        )}
       </Details>
     </Box>
   )
