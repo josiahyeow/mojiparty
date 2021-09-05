@@ -57,7 +57,6 @@ io.on("connection", (socket: Socket) => {
 app.use("/room", roomRouter);
 
 app.get("/*", (_, res) => {
-  console.log(process.cwd());
   res.sendFile(path.join(process.cwd(), "./client/build", "index.html"));
 });
 
