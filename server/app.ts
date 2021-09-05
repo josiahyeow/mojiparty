@@ -38,6 +38,7 @@ const fetchEmojisFromGoogleSheets = async () => {
 
 // Socket IO
 const io = new Server(server, {
+  path: "/moji.io",
   cors: {
     origin: ["https://www.mojiparty.io", "http://localhost:3000"],
     credentials: true,
