@@ -42,7 +42,6 @@ const io = new Server(server, {
     origin: ["https://www.mojiparty.io", "http://localhost:3000"],
     credentials: true,
   },
-  allowEIO3: true,
 });
 
 io.on("connection", (socket: Socket) => {
