@@ -1,10 +1,10 @@
 import { Server, Socket } from "socket.io";
 
-const Rooms = require("../actions/rooms");
-const Players = require("../actions/players");
-const Settings = require("../actions/settings");
-const chatCommands = require("../utils/chat-commands");
-const { sendRoomUpdate, resetRoom } = require("../utils/update-room");
+import * as Rooms from "../actions/rooms";
+import * as Players from "../actions/players";
+import * as Settings from "../actions/settings";
+import { chatCommands } from "../utils/chat-commands";
+import { sendRoomUpdate, resetRoom } from "../utils/update-room";
 
 export function lobbyEvents(io: Server, socket: Socket) {
   socket.on("update-setting", (roomName, setting, value) => {
@@ -26,13 +26,14 @@ export function lobbyEvents(io: Server, socket: Socket) {
       }
       sendRoomUpdate(io, roomName, "settings");
     } catch (e) {
-      resetRoom(socket, e);
+      resetRoom(socket, e as Error);
     }
   });
 
   socket.on("send-chat-message", ({ roomName, message }) => {
     try {
       const room = Rooms.get(roomName);
+      if (!room) return;
       if (message.charAt(0) === "/") {
         chatCommands(io, socket, roomName, message, false);
       } else {
@@ -44,7 +45,7 @@ export function lobbyEvents(io: Server, socket: Socket) {
         }
       }
     } catch (e) {
-      resetRoom(socket, e);
+      resetRoom(socket, e as Error);
     }
   });
 }
