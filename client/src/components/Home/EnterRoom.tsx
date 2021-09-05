@@ -37,7 +37,7 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
 
   const handleSubmit = (action: 'create' | 'join') => {
     if (!playerName || !roomName) {
-      setError('Please enter both your player and room name')
+      setError('Please enter both your player and party name')
     } else {
       if (action === 'create') handlecreate()
       if (action === 'join') handleJoinRoom()
@@ -46,11 +46,11 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
 
   const handlecreate = async () => {
     if (roomName.match(/[!@#$%^&*()-+_=/]/)) {
-      setError(`Room name can't contain symbols`)
+      setError(`Party name can't contain symbols`)
       return false
     }
     if (roomName.length > 16) {
-      setError(`Room name can't be longer than 16 characters`)
+      setError(`Party name can't be longer than 16 characters`)
       return false
     }
     const response = await create(roomName as string, roomPassword as string)
@@ -91,7 +91,7 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
         setError(`Incorrect password for room ${roomName}`)
       }
       if (response.status === 404) {
-        setError(`Could not find room ${roomName}`)
+        setError(`Could not find party ${roomName}`)
       }
     }
   }
@@ -122,15 +122,13 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
           placeholder="Enter party name"
           onChange={(event) => setRoomName(event.target.value)}
         ></Input>
-        {!room && (
-          <Button
-            id="create-room-button"
-            type="button"
-            onClick={() => handleSubmit('create')}
-          >
-            Join or Start Party
-          </Button>
-        )}
+        <Button
+          id="create-room-button"
+          type="button"
+          onClick={() => handleSubmit('create')}
+        >
+          Join {!room && 'or Start'} Party
+        </Button>
       </Form>
     </Box>
   )
