@@ -1,3 +1,4 @@
+import { isAfter, isBefore, sub } from "date-fns";
 import { db } from "../firebase";
 
 import {
@@ -91,27 +92,30 @@ async function create(roomName: string, roomPassword = "") {
   try {
     const room = await db.ref("rooms/" + roomName).get();
     if (room.exists()) {
-      throw new Error(`Room ${roomName} already exists.`);
-    } else {
-      const newRoom: Room = {
-        name: roomName,
-        password: roomPassword,
-        players: {},
-        settings: {
-          scoreLimit: DEFAULT_SCORE_LIMIT,
-          selectedCategories: DEFAULT_SELECTED_CATEGORIES,
-          mode: GAME_MODE.SKRIBBL,
-          timer: DEFAULT_TIME_PER_ROUND,
-          rounds: DEFAULT_ROUNDS,
-          chat: true,
-        },
-        lastEvent: { type: "Room created" },
-        createdAt: Date.now(),
-        game: null,
-      };
-      update(newRoom);
-      return rooms[roomName];
+      const existingRoom = room.val();
+      const yesterday = sub(new Date(), { days: 1 });
+      if (isBefore(yesterday, new Date(existingRoom.createdAt))) {
+        throw new Error(`Room ${roomName} already exists.`);
+      }
     }
+    const newRoom: Room = {
+      name: roomName,
+      password: roomPassword,
+      players: {},
+      settings: {
+        scoreLimit: DEFAULT_SCORE_LIMIT,
+        selectedCategories: DEFAULT_SELECTED_CATEGORIES,
+        mode: GAME_MODE.SKRIBBL,
+        timer: DEFAULT_TIME_PER_ROUND,
+        rounds: DEFAULT_ROUNDS,
+        chat: true,
+      },
+      lastEvent: { type: "Room created" },
+      createdAt: Date.now(),
+      game: null,
+    };
+    update(newRoom);
+    return rooms[roomName];
   } catch (e) {
     throw e;
   }
