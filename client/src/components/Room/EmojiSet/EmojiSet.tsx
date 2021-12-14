@@ -106,7 +106,9 @@ const EmojiSet = ({ gameEnd }) => {
     settings: { rounds, timer },
   } = useContext(RoomContext) as RoomContextProps
   const [counter, setCounter] = useState(1)
-  const [mojiSet, setMojiSet] = useState(currentEmojiSet.emojiSet)
+  const [mojiSet, setMojiSet] = useState(
+    currentEmojiSet?.emojiSet || { emojiSet: '', hint: '', answer: '' }
+  )
   const isDrawer = player?.id === drawer
   const hasGuessed =
     players && player?.id ? players[player?.id]?.guessed : false
@@ -116,9 +118,15 @@ const EmojiSet = ({ gameEnd }) => {
   }, [lastEvent])
 
   useEffect(() => {
-    socket.on('new-game-emoji', (updated) => setMojiSet(updated))
-    setMojiSet(currentEmojiSet.emojiSet)
-  }, [currentEmojiSet.emojiSet])
+    if (currentEmojiSet?.emojiSet) {
+      socket.on('new-game-emoji', (updated) => setMojiSet(updated))
+      setMojiSet(currentEmojiSet.emojiSet)
+    }
+  }, [currentEmojiSet?.emojiSet])
+
+  if (!currentEmojiSet) {
+    return null
+  }
 
   const emojiSetElement = (
     <>
