@@ -124,8 +124,11 @@ const EnterRoom: React.FC<{ room?: string; password?: string }> = ({
         ></Input>
         <Button
           id="create-room-button"
-          type="button"
-          onClick={() => handleSubmit('create')}
+          type="submit"
+          onClick={(e) => {
+            e.preventDefault()
+            handleSubmit('create')
+          }}
         >
           Join {!room && 'or Start'} Party
         </Button>
