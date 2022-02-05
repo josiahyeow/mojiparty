@@ -1,15 +1,14 @@
 import { shuffle } from "lodash";
-import { get, update, getEmojis, EmojiSet } from "./rooms";
-import { GameEvent, updateGameEvent } from "./event";
-import * as Settings from "./settings";
-import * as Players from "./players";
-
+import { Server } from "socket.io";
 import { GAME_MODE } from "../utils/constants";
 import { hintTimer } from "../utils/hint-timer";
 import { roundTimer } from "../utils/round-timer";
-import { Server } from "socket.io";
+import { GameEvent, updateGameEvent } from "./event";
 import type { Player } from "./player";
+import * as Players from "./players";
+import { EmojiSet, get, getEmojis, update } from "./rooms";
 import type { Categories } from "./settings";
+import * as Settings from "./settings";
 
 export type Game = {
   emojiSets: EmojiSet[];
@@ -197,14 +196,19 @@ function nextEmojiSet(roomName: string, io: Server) {
   }
   if (Settings.getMode(roomName) === GAME_MODE.SKRIBBL) {
     room.game.round += 1;
-    const leadingPlayer = Object.values(room.players).reduce((leader, player) =>
-      leader.score > player.score ? leader : player
-    );
-    if (room.game.round > 1) {
-      room.game.lastEvent = {
-        ...leadingPlayer,
-        type: "round-end",
-      };
+    const players = Object.values(room.players);
+    if (players.length) {
+      const leadingPlayer = Object.values(
+        room.players
+      ).reduce((leader, player) =>
+        leader.score > player.score ? leader : player
+      );
+      if (room.game.round > 1) {
+        room.game.lastEvent = {
+          ...leadingPlayer,
+          type: "round-end",
+        };
+      }
     }
     if (room.game.round > room.settings.rounds) {
       getWinners(roomName);
