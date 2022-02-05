@@ -5,6 +5,8 @@ const StyledFooter = styled.footer`
   display: flex;
   justify-content: space-between;
   padding: 2rem;
+  max-width: 80rem;
+  margin: auto;
 `
 
 const Credits = styled.span`
