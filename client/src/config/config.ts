@@ -1,7 +1,7 @@
 export const config =
   process.env.NODE_ENV === 'development'
     ? {
-        SERVER_URL: 'http://localhost:5000',
+        SERVER_URL: 'http://localhost:5001',
         CLIENT_URL: 'http://localhost:3000',
         GA_TRACKING_ID: '',
       }

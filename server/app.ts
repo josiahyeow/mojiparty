@@ -1,20 +1,20 @@
 import cors from "cors";
-import createError from "http-errors";
 import express from "express";
 import http from "http";
+import createError from "http-errors";
 import path from "path";
-import "./firebase";
-import roomRouter from "./routes/room";
-import { fetchEmojis } from "./data/emoji-set";
-import * as Rooms from "./actions/rooms";
 import { Server, Socket } from "socket.io";
+import * as Rooms from "./actions/rooms";
+import { fetchEmojis } from "./data/emoji-set";
 import { gameEvents } from "./events/game";
 import { helperEvents } from "./events/helper";
 import { lobbyEvents } from "./events/lobby";
 import { pictionaryEvents } from "./events/pictionary";
 import { playerEvents } from "./events/player";
+import "./firebase";
+import roomRouter from "./routes/room";
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const app = express();
 
 app.use(cors());
