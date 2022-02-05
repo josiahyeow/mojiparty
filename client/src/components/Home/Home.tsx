@@ -22,11 +22,11 @@ const Home = (props: any) => {
     <Grid>
       <Left>
         <EnterRoom room={room} password={password} />
+        <Donate />
         <Socials />
       </Left>
       <Middle>
         <Instructions />
-        <Donate />
         <LinksGrid>
           <Contact />
           <Suggestions />

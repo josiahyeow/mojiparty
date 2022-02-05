@@ -1,4 +1,8 @@
 import React from 'react'
+import {
+  Facebook as FacebookIcon,
+  Instagram as InstagramIcon,
+} from 'react-feather'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
 import emoji from '../../utils/emoji'
@@ -6,7 +10,6 @@ import { Box, H2, Link } from '../Styled/Styled'
 
 const SocialLinks = styled.div`
   display: flex;
-  flex-wrap: wrap;
   width: 100%;
 `
 
@@ -55,7 +58,7 @@ const Socials = () => {
             })
           }
         >
-          Facebook
+          <FacebookIcon />
         </Facebook>
         <Instagram
           href="https://www.instagram.com/mojiparty"
@@ -67,7 +70,7 @@ const Socials = () => {
             })
           }
         >
-          Instagram
+          <InstagramIcon />
         </Instagram>
       </SocialLinks>
     </Box>

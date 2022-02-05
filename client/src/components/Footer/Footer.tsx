@@ -20,7 +20,16 @@ const Link = styled.a`
 export function Footer() {
   return (
     <StyledFooter>
-      <Credits>Made with 🎈 in Melbourne AU</Credits>
+      <Credits>
+        Made with 🎈 in{' '}
+        <Link
+          href="https://twitter.com/josiahyeow"
+          rel="noreferrer"
+          target="_blank"
+        >
+          Melbourne AU
+        </Link>
+      </Credits>
       <Link
         href="https://mojiparty.notion.site/Terms-of-Service-3537ad45bcc04ab4be9962a73eec645f"
         rel="noreferrer"
