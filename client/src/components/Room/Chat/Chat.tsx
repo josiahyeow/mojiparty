@@ -300,7 +300,7 @@ const WelcomeMessages = () => {
       <Message>
         <Player>{emoji('🧑🏻‍💻')}</Player>
         <Bubble>
-          If you've had a good time, please help me out with server costs by{' '}
+          If you're having a good time, please help me out with server costs by{' '}
           <Donate
             href="https://ko-fi.com/mojiparty"
             target="_blank"
