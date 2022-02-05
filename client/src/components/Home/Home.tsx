@@ -1,13 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Grid, Left, Middle } from '../Styled/Styled'
+import Contact from './Contact'
+import Donate from './Donate'
 import EnterRoom from './EnterRoom'
 import Instructions from './Instructions'
 import Socials from './Socials'
-import Contact from './Contact'
 import Suggestions from './Suggestions'
-import Notice from './Notice'
-import Donate from './Donate'
 
 const LinksGrid = styled(Grid)`
   grid-template-columns: 0.5fr 0.5fr;
@@ -32,7 +31,6 @@ const Home = (props: any) => {
           <Contact />
           <Suggestions />
         </LinksGrid>
-        <Notice />
       </Middle>
     </Grid>
   )

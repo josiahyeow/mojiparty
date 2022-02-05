@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactGA from 'react-ga'
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import styled from 'styled-components'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
-import config from './config/config'
+import { Footer } from './components/Footer/Footer'
 import Home from './components/Home/Home'
 import RoomEntry from './components/Room/RoomEntry/RoomEntry'
 import GlobalStyle from './components/Styled/GlobalStyle'
-import { Footer } from './components/Footer/Footer'
+import config from './config/config'
 // import socket from './utils/socket'
 
 const Logo = styled.h1`
@@ -108,7 +108,7 @@ function App() {
               <Logo>
                 <LogoLink to="/" title="Mojiparty">
                   <LogoImg
-                    src="mojiparty-title-beta.png"
+                    src="mojiparty-title-basic.png"
                     alt="Mojiparty Logo"
                   />
                 </LogoLink>
