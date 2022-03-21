@@ -1,8 +1,8 @@
-import * as Rooms from "./rooms";
 import { GAME_MODE } from "../utils/constants";
 import { updateGameEvent } from "./event";
-import * as Players from "./players";
 import * as Game from "./game";
+import * as Players from "./players";
+import * as Rooms from "./rooms";
 
 export type Player = {
   id: string;
@@ -62,7 +62,7 @@ function addPoint(roomName: string, playerId: string) {
       };
     }
     if (room.settings.mode === GAME_MODE.SKRIBBL) {
-      const points = room.game.timeLeft * 0.3 * 100;
+      const points = Math.abs(room.game.timeLeft * 0.3 * 100);
       room.players[playerId].guessed = true;
       room.players[playerId].score += points;
       room.game.lastEvent = {
