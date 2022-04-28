@@ -10,6 +10,7 @@ import { Box, H2, Link } from '../Styled/Styled'
 
 const SocialLinks = styled.div`
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
 `
 
