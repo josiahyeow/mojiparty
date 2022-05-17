@@ -32,7 +32,7 @@ const RoomDetails = () => {
 
     setCopySuccess('✅ Link copied!')
     await new Promise((resolve) => setTimeout(() => resolve(true), 2000))
-    setCopySuccess('📋 Invite')
+    setCopySuccess('💌 Invite to party')
   }
 
   function hidePartyName() {
