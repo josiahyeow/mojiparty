@@ -27,20 +27,16 @@ export function parseIndexRows(rows: any) {
 
 async function fetchCustomEmojis() {
   try {
-    console.log(hash);
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
     await doc.useServiceAccountAuth(decryptJSON(hash));
     await doc.loadInfo();
 
     const index = parseIndexRows(await doc.sheetsByIndex[0].getRows());
 
-    console.log(index);
-
     const hariRaya = parseRows(
       await doc.sheetsById[index[0].sheetId].getRows()
     );
 
-    console.log(hariRaya);
     return {
       hariRaya,
     };

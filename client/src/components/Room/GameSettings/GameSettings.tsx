@@ -26,6 +26,7 @@ type Category = {
   include: boolean
   weight: number
   community: boolean
+  author: string | null
 }
 
 type Categories = {
@@ -70,6 +71,8 @@ const CategoryIcon = styled.span`
 const CategoryName = styled.span`
   font-weight: bold;
 `
+
+const CategoryAuthor = styled.span``
 
 const ModeSettings = styled.div`
   display: grid;
@@ -251,319 +254,301 @@ const GameSettings = () => {
     ([, category]) => category.include
   ).length
 
-  return useMemo(
-    () => (
-      <>
-        <Box>
-          <Container>
-            <H3>Game Settings</H3>
-            <Tabs>
-              <Tab selected={tab === 'mode'} onClick={() => setTab('mode')}>
-                Mode
-              </Tab>
-              <Tab
-                selected={tab === 'categories'}
-                onClick={() => setTab('categories')}
-              >
-                Categories
-              </Tab>
-            </Tabs>
+  return (
+    <>
+      <Box>
+        <Container>
+          <H3>Game Settings</H3>
+          <Tabs>
+            <Tab selected={tab === 'mode'} onClick={() => setTab('mode')}>
+              Mode
+            </Tab>
+            <Tab
+              selected={tab === 'categories'}
+              onClick={() => setTab('categories')}
+            >
+              Categories
+            </Tab>
+          </Tabs>
 
-            {tab === 'mode' && (
-              <>
-                {' '}
-                <Label htmlFor="players-input">Max players</Label>
-                <SelectWrapper>
+          {tab === 'mode' && (
+            <>
+              {' '}
+              <Label htmlFor="players-input">Max players</Label>
+              <SelectWrapper>
+                <Select
+                  id="mode-input"
+                  value={maxPlayers}
+                  onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
+                  disabled={!isHost}
+                  title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                >
+                  <optgroup label="Party">
+                    {MAX_PLAYERS.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Mega Party (Experimental)">
+                    {MAX_PLAYERS_EXPERIMENTAL.map((value) => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </optgroup>
+                </Select>
+              </SelectWrapper>
+              <Label htmlFor="mode-input">
+                Game mode{' '}
+                <ModeInfoButton onClick={() => setModeModalIsOpen(true)}>
+                  i
+                </ModeInfoButton>
+              </Label>
+              {/* <Select
+        id="mode-input"
+        value={mode}
+        onChange={(e) => updateMode(e.target.value)}
+        disabled={!isHost}
+        title={!isHost ? ONLY_HOST_MESSAGE : ''}
+      >
+        {GAME_MODE.map(({ name, value }) => (
+          <option key={value} value={value}>
+            {name}
+          </option>
+        ))}
+      </Select> */}
+              <CategorySelector>
+                {GAME_MODE.map(({ name, value, icon, description }) => (
+                  <Category>
+                    <CategoryCheckbox
+                      type="radio"
+                      id={name}
+                      name={name}
+                      value={value}
+                      checked={value === mode}
+                      onChange={() => updateMode(value)}
+                    />
+                    <CategoryLabel
+                      htmlFor={name}
+                      disabled={!isHost}
+                      title={description}
+                    >
+                      <CategoryIcon>{emoji(icon)}</CategoryIcon>
+                      <CategoryName>{name}</CategoryName>
+                    </CategoryLabel>
+                  </Category>
+                ))}
+              </CategorySelector>
+              {mode === 'classic' && (
+                <>
+                  {/* <Label htmlFor="scorelimit-input">Score Limit</Label> */}
                   <Select
-                    id="mode-input"
-                    value={maxPlayers}
-                    onChange={(e) => setMaxPlayers(parseInt(e.target.value))}
+                    id="scorelimit-input"
+                    value={scoreLimit}
+                    onChange={(e) => updateScoreLimit(e.target.value)}
                     disabled={!isHost}
                     title={!isHost ? ONLY_HOST_MESSAGE : ''}
                   >
-                    <optgroup label="Party">
-                      {MAX_PLAYERS.map((value) => (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </optgroup>
-                    <optgroup label="Mega Party (Experimental)">
-                      {MAX_PLAYERS_EXPERIMENTAL.map((value) => (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </optgroup>
+                    {SCORE_LIMITS.map((scoreLimit) => (
+                      <option key={scoreLimit} value={scoreLimit}>
+                        {scoreLimit} points to win
+                      </option>
+                    ))}
                   </Select>
-                </SelectWrapper>
-                <Label htmlFor="mode-input">
-                  Game mode{' '}
-                  <ModeInfoButton onClick={() => setModeModalIsOpen(true)}>
-                    i
-                  </ModeInfoButton>
-                </Label>
-                {/* <Select
-              id="mode-input"
-              value={mode}
-              onChange={(e) => updateMode(e.target.value)}
-              disabled={!isHost}
-              title={!isHost ? ONLY_HOST_MESSAGE : ''}
-            >
-              {GAME_MODE.map(({ name, value }) => (
-                <option key={value} value={value}>
-                  {name}
-                </option>
-              ))}
-            </Select> */}
-                <CategorySelector>
-                  {GAME_MODE.map(({ name, value, icon, description }) => (
-                    <Category>
+                </>
+              )}
+              {(mode === 'skribbl' || mode === 'pictionary') && (
+                <ModeSettings>
+                  {/* <Label htmlFor="rounds-input">Rounds</Label> */}
+                  <Select
+                    id="rounds-input"
+                    value={rounds}
+                    onChange={(e) => updateRounds(e.target.value)}
+                    disabled={!isHost}
+                    title={
+                      !isHost ? ONLY_HOST_MESSAGE : 'Number of rounds to play'
+                    }
+                  >
+                    {ROUNDS.map((rounds) => (
+                      <option key={rounds} value={rounds}>
+                        {rounds} rounds
+                      </option>
+                    ))}
+                  </Select>
+                  {/* <Label htmlFor="roundTimer-input">Time per round (sec)</Label> */}
+                  <Select
+                    id="roundTimer-input"
+                    value={roundTimer}
+                    onChange={(e) => updateRoundTimer(e.target.value)}
+                    disabled={!isHost}
+                    title={
+                      !isHost
+                        ? ONLY_HOST_MESSAGE
+                        : 'Number of seconds per round'
+                    }
+                  >
+                    {ROUND_TIMERS.map((roundTimer) => (
+                      <option key={roundTimer} value={roundTimer}>
+                        {roundTimer === 0 ? 'Unlimited' : roundTimer} sec
+                      </option>
+                    ))}
+                  </Select>
+                </ModeSettings>
+              )}
+            </>
+          )}
+          {tab === 'categories' && (
+            <>
+              {' '}
+              <Label>Categories</Label>
+              <CategorySelector>
+                {standardCategories
+                  .sort((a, b) => a[1].weight - b[1].weight)
+                  .map(([category, value]) => (
+                    <Category key={category}>
                       <CategoryCheckbox
-                        type="radio"
-                        id={name}
-                        name={name}
-                        value={value}
-                        checked={value === mode}
-                        onChange={() => updateMode(value)}
+                        type="checkbox"
+                        name={`${category}-checkbox`}
+                        value={`${category}`}
+                        checked={selectedCategories[category].include}
+                        onChange={(event) =>
+                          handleUpdateCategory(event.target.value)
+                        }
+                        disabled={!isHost}
+                        title={!isHost ? ONLY_HOST_MESSAGE : ''}
                       />
                       <CategoryLabel
-                        htmlFor={name}
+                        htmlFor={`${category}-checkbox`}
+                        onClick={() => isHost && handleUpdateCategory(category)}
                         disabled={!isHost}
-                        title={description}
+                        title={!isHost ? ONLY_HOST_MESSAGE : ''}
                       >
-                        <CategoryIcon>{emoji(icon)}</CategoryIcon>
-                        <CategoryName>{name}</CategoryName>
+                        <CategoryIcon>
+                          {emoji(selectedCategories[category].icon)}
+                        </CategoryIcon>
+                        <CategoryName>
+                          {selectedCategories[category].name}
+                        </CategoryName>
                       </CategoryLabel>
                     </Category>
                   ))}
-                </CategorySelector>
-                {mode === 'classic' && (
-                  <>
-                    {/* <Label htmlFor="scorelimit-input">Score Limit</Label> */}
-                    <Select
-                      id="scorelimit-input"
-                      value={scoreLimit}
-                      onChange={(e) => updateScoreLimit(e.target.value)}
-                      disabled={!isHost}
-                      title={!isHost ? ONLY_HOST_MESSAGE : ''}
-                    >
-                      {SCORE_LIMITS.map((scoreLimit) => (
-                        <option key={scoreLimit} value={scoreLimit}>
-                          {scoreLimit} points to win
-                        </option>
-                      ))}
-                    </Select>
-                  </>
-                )}
-                {(mode === 'skribbl' || mode === 'pictionary') && (
-                  <ModeSettings>
-                    {/* <Label htmlFor="rounds-input">Rounds</Label> */}
-                    <Select
-                      id="rounds-input"
-                      value={rounds}
-                      onChange={(e) => updateRounds(e.target.value)}
-                      disabled={!isHost}
-                      title={
-                        !isHost ? ONLY_HOST_MESSAGE : 'Number of rounds to play'
-                      }
-                    >
-                      {ROUNDS.map((rounds) => (
-                        <option key={rounds} value={rounds}>
-                          {rounds} rounds
-                        </option>
-                      ))}
-                    </Select>
-                    {/* <Label htmlFor="roundTimer-input">Time per round (sec)</Label> */}
-                    <Select
-                      id="roundTimer-input"
-                      value={roundTimer}
-                      onChange={(e) => updateRoundTimer(e.target.value)}
-                      disabled={!isHost}
-                      title={
-                        !isHost
-                          ? ONLY_HOST_MESSAGE
-                          : 'Number of seconds per round'
-                      }
-                    >
-                      {ROUND_TIMERS.map((roundTimer) => (
-                        <option key={roundTimer} value={roundTimer}>
-                          {roundTimer === 0 ? 'Unlimited' : roundTimer} sec
-                        </option>
-                      ))}
-                    </Select>
-                  </ModeSettings>
-                )}
-              </>
-            )}
-            {tab === 'categories' && (
-              <>
-                {' '}
-                <Label>Categories</Label>
-                <CategorySelector>
-                  {standardCategories
-                    .sort((a, b) => a[1].weight - b[1].weight)
-                    .map(([category, value]) => (
-                      <Category key={category}>
-                        <CategoryCheckbox
-                          type="checkbox"
-                          name={`${category}-checkbox`}
-                          value={`${category}`}
-                          checked={selectedCategories[category].include}
-                          onChange={(event) =>
-                            handleUpdateCategory(event.target.value)
-                          }
-                          disabled={!isHost}
-                          title={!isHost ? ONLY_HOST_MESSAGE : ''}
-                        />
-                        <CategoryLabel
-                          htmlFor={`${category}-checkbox`}
-                          onClick={() =>
-                            isHost && handleUpdateCategory(category)
-                          }
-                          disabled={!isHost}
-                          title={!isHost ? ONLY_HOST_MESSAGE : ''}
-                        >
-                          <CategoryIcon>
-                            {emoji(selectedCategories[category].icon)}
-                          </CategoryIcon>
-                          <CategoryName>
-                            {selectedCategories[category].name}
-                          </CategoryName>
-                        </CategoryLabel>
-                      </Category>
-                    ))}
-                  <Category>
-                    <CommunityCategoriesButton
-                      onClick={() => setCommunityCategoriesShown(true)}
-                      disabled={!isHost}
-                    >
-                      <CategoryName>
-                        More{' '}
-                        {communityCategoriesSelected
-                          ? `(${communityCategoriesSelected} selected)`
-                          : null}
-                      </CategoryName>
-                    </CommunityCategoriesButton>
-                  </Category>
-                </CategorySelector>
-              </>
-            )}
-          </Container>
-        </Box>
-        <Modal
-          isOpen={modeModalIsOpen}
-          onRequestClose={() => setModeModalIsOpen(false)}
-          style={{
-            content: {
-              width: '50%',
-              height: 'auto',
-              border: '#050509 3px solid',
-              borderRadius: '6px',
-              top: '50%',
-              left: '50%',
-              right: 'auto',
-              bottom: 'auto',
-              marginRight: '-50%',
-              transform: 'translate(-50%, -50%)',
-              padding: '1em 2em',
-            },
-          }}
-        >
-          <h2>Game modes</h2>
-          <h3>{emoji('🎉')} Party</h3>
-          <p>
-            The faster you guess, the more points you get!
-            <br />
-            <br />
-            Choose the number of rounds you want to play, and time (seconds) for
-            each round.
-          </p>
-          <hr style={{ borderTop: '#050509 3px solid', margin: '2em 0' }} />
-          <h3>{emoji('🎂')} Classic</h3>
-          <p>
-            The first to guess the emoji, gets the point!
-            <br />
-            <br />
-            Winner takes it all. Choose the number of points you want to play up
-            to.
-          </p>
-        </Modal>
-        <Modal
-          isOpen={communityCategoriesShown}
-          onRequestClose={() => setCommunityCategoriesShown(false)}
-          style={{
-            content: {
-              width: '50%',
-              height: 'auto',
-              border: '#050509 3px solid',
-              borderRadius: '6px',
-              top: '50%',
-              left: '50%',
-              right: 'auto',
-              bottom: 'auto',
-              marginRight: '-50%',
-              transform: 'translate(-50%, -50%)',
-              padding: '1em 2em',
-            },
-          }}
-        >
-          <h3>{emoji('🤝')} Community made categories</h3>
-          <CategorySelector>
-            {communityCategories
-              .sort((a, b) => a[1].weight - b[1].weight)
-              .map(([category, value]) => (
-                <Category key={category}>
-                  <CategoryCheckbox
-                    type="checkbox"
-                    name={`${category}-checkbox`}
-                    value={`${category}`}
-                    checked={selectedCategories[category].include}
-                    onChange={(event) =>
-                      handleUpdateCategory(event.target.value)
-                    }
+                <Category>
+                  <CommunityCategoriesButton
+                    onClick={() => setCommunityCategoriesShown(true)}
                     disabled={!isHost}
-                    title={!isHost ? ONLY_HOST_MESSAGE : ''}
-                  />
-                  <CategoryLabel
-                    htmlFor={`${category}-checkbox`}
-                    onClick={() => isHost && handleUpdateCategory(category)}
-                    disabled={!isHost}
-                    title={!isHost ? ONLY_HOST_MESSAGE : ''}
                   >
-                    <CategoryIcon>
-                      {emoji(selectedCategories[category].icon)}
-                    </CategoryIcon>
                     <CategoryName>
-                      {selectedCategories[category].name}
+                      More{' '}
+                      {communityCategoriesSelected
+                        ? `(${communityCategoriesSelected} selected)`
+                        : null}
                     </CategoryName>
-                  </CategoryLabel>
+                  </CommunityCategoriesButton>
                 </Category>
-              ))}
-          </CategorySelector>
-        </Modal>
-      </>
-    ),
-    [
-      GAME_MODE,
-      ROUNDS,
-      ROUND_TIMERS,
-      SCORE_LIMITS,
-      handleUpdateCategory,
-      isHost,
-      maxPlayers,
-      mode,
-      modeModalIsOpen,
-      roundTimer,
-      rounds,
-      scoreLimit,
-      selectedCategories,
-      tab,
-      updateMode,
-      updateRoundTimer,
-      updateRounds,
-      updateScoreLimit,
-    ]
+              </CategorySelector>
+            </>
+          )}
+        </Container>
+      </Box>
+      <Modal
+        isOpen={modeModalIsOpen}
+        onRequestClose={() => setModeModalIsOpen(false)}
+        style={{
+          content: {
+            width: '50%',
+            height: 'auto',
+            border: '#050509 3px solid',
+            borderRadius: '6px',
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '1em 2em',
+          },
+        }}
+      >
+        <h2>Game modes</h2>
+        <h3>{emoji('🎉')} Party</h3>
+        <p>
+          The faster you guess, the more points you get!
+          <br />
+          <br />
+          Choose the number of rounds you want to play, and time (seconds) for
+          each round.
+        </p>
+        <hr style={{ borderTop: '#050509 3px solid', margin: '2em 0' }} />
+        <h3>{emoji('🎂')} Classic</h3>
+        <p>
+          The first to guess the emoji, gets the point!
+          <br />
+          <br />
+          Winner takes it all. Choose the number of points you want to play up
+          to.
+        </p>
+      </Modal>
+      <Modal
+        isOpen={communityCategoriesShown}
+        onRequestClose={() => setCommunityCategoriesShown(false)}
+        style={{
+          content: {
+            width: '50%',
+            height: 'auto',
+            border: '#050509 3px solid',
+            borderRadius: '6px',
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            padding: '1em 2em',
+          },
+        }}
+      >
+        <h3>{emoji('🤝')} Community made categories</h3>
+        <CategorySelector>
+          {communityCategories
+            .sort((a, b) => a[1].weight - b[1].weight)
+            .map(([category]) => (
+              <Category key={category}>
+                <CategoryCheckbox
+                  type="checkbox"
+                  name={`${category}-checkbox`}
+                  value={`${category}`}
+                  checked={selectedCategories[category].include}
+                  onChange={(event) => handleUpdateCategory(event.target.value)}
+                  disabled={!isHost}
+                  title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                />
+                <CategoryLabel
+                  htmlFor={`${category}-checkbox`}
+                  onClick={() => isHost && handleUpdateCategory(category)}
+                  disabled={!isHost}
+                  title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                >
+                  <CategoryIcon>
+                    {emoji(selectedCategories[category].icon)}
+                  </CategoryIcon>
+                  <CategoryName>
+                    {selectedCategories[category].name}
+                  </CategoryName>
+                  {selectedCategories[category].author && (
+                    <>
+                      {' '}
+                      <CategoryAuthor>
+                        by {selectedCategories[category].author}
+                      </CategoryAuthor>
+                    </>
+                  )}
+                </CategoryLabel>
+              </Category>
+            ))}
+        </CategorySelector>
+      </Modal>
+    </>
   )
 }
 

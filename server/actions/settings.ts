@@ -8,6 +8,7 @@ export type Category = {
   include: boolean;
   weight: number;
   community: boolean;
+  author: string | null;
 };
 
 export type Categories = {
