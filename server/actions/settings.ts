@@ -7,6 +7,7 @@ export type Category = {
   icon: string;
   include: boolean;
   weight: number;
+  community: boolean;
 };
 
 export type Categories = {
@@ -19,6 +20,7 @@ export type Categories = {
   brands: Category;
   anime: Category;
   koreaboo: Category;
+  hariRaya: Category;
 };
 
 export type Settings = {
@@ -109,6 +111,7 @@ const updateCategories = (roomName: string, updatedCategories: any) => {
     return;
   }
   room.settings.selectedCategories = updatedCategories;
+  console.log(room.settings.selectedCategories);
   updateGameEvent(roomName, "categories-updated");
   update(room);
 };

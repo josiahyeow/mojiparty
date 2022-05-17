@@ -25,6 +25,7 @@ type Category = {
   icon: string
   include: boolean
   weight: number
+  community: boolean
 }
 
 type Categories = {
@@ -118,6 +119,13 @@ const ModeInfoButton = styled(Button)`
   margin-left: 0.2em;
 `
 
+const CommunityCategoriesButton = styled(Button)`
+  border-radius: 6px;
+  padding: 0.25rem;
+  margin: 0;
+  margin-left: 0.2em;
+`
+
 const ONLY_HOST_MESSAGE = 'Only the host can change the game settings'
 
 const MAX_PLAYERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
@@ -130,6 +138,9 @@ const GameSettings = () => {
   const [maxPlayers, setMaxPlayers] = useState(6)
   const [tab, setTab] = useState<'mode' | 'categories'>('mode')
   const [modeModalIsOpen, setModeModalIsOpen] = useState(false)
+  const [communityCategoriesShown, setCommunityCategoriesShown] = useState(
+    false
+  )
   const scoreLimit = settings?.scoreLimit || 0
   const selectedCategories: Categories = settings?.selectedCategories || {}
   const rounds = settings?.rounds || 0
@@ -229,6 +240,16 @@ const GameSettings = () => {
     },
     [room.name]
   )
+
+  const standardCategories = Object.entries(selectedCategories).filter(
+    ([, category]) => !category.community
+  )
+  const communityCategories = Object.entries(selectedCategories).filter(
+    ([, category]) => category.community
+  )
+  const communityCategoriesSelected = communityCategories.filter(
+    ([, category]) => category.include
+  ).length
 
   return useMemo(
     () => (
@@ -380,7 +401,7 @@ const GameSettings = () => {
                 {' '}
                 <Label>Categories</Label>
                 <CategorySelector>
-                  {Object.entries(selectedCategories)
+                  {standardCategories
                     .sort((a, b) => a[1].weight - b[1].weight)
                     .map(([category, value]) => (
                       <Category key={category}>
@@ -412,6 +433,19 @@ const GameSettings = () => {
                         </CategoryLabel>
                       </Category>
                     ))}
+                  <Category>
+                    <CommunityCategoriesButton
+                      onClick={() => setCommunityCategoriesShown(true)}
+                      disabled={!isHost}
+                    >
+                      <CategoryName>
+                        More{' '}
+                        {communityCategoriesSelected
+                          ? `(${communityCategoriesSelected} selected)`
+                          : null}
+                      </CategoryName>
+                    </CommunityCategoriesButton>
+                  </Category>
                 </CategorySelector>
               </>
             )}
@@ -454,6 +488,59 @@ const GameSettings = () => {
             Winner takes it all. Choose the number of points you want to play up
             to.
           </p>
+        </Modal>
+        <Modal
+          isOpen={communityCategoriesShown}
+          onRequestClose={() => setCommunityCategoriesShown(false)}
+          style={{
+            content: {
+              width: '50%',
+              height: 'auto',
+              border: '#050509 3px solid',
+              borderRadius: '6px',
+              top: '50%',
+              left: '50%',
+              right: 'auto',
+              bottom: 'auto',
+              marginRight: '-50%',
+              transform: 'translate(-50%, -50%)',
+              padding: '1em 2em',
+            },
+          }}
+        >
+          <h3>{emoji('🤝')} Community made categories</h3>
+          <CategorySelector>
+            {communityCategories
+              .sort((a, b) => a[1].weight - b[1].weight)
+              .map(([category, value]) => (
+                <Category key={category}>
+                  <CategoryCheckbox
+                    type="checkbox"
+                    name={`${category}-checkbox`}
+                    value={`${category}`}
+                    checked={selectedCategories[category].include}
+                    onChange={(event) =>
+                      handleUpdateCategory(event.target.value)
+                    }
+                    disabled={!isHost}
+                    title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                  />
+                  <CategoryLabel
+                    htmlFor={`${category}-checkbox`}
+                    onClick={() => isHost && handleUpdateCategory(category)}
+                    disabled={!isHost}
+                    title={!isHost ? ONLY_HOST_MESSAGE : ''}
+                  >
+                    <CategoryIcon>
+                      {emoji(selectedCategories[category].icon)}
+                    </CategoryIcon>
+                    <CategoryName>
+                      {selectedCategories[category].name}
+                    </CategoryName>
+                  </CategoryLabel>
+                </Category>
+              ))}
+          </CategorySelector>
         </Modal>
       </>
     ),

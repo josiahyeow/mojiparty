@@ -5,7 +5,7 @@ import hash from "./hash.json";
 
 const SPREADSHEET_ID = "1BzqqZPJjaGtr8wEXL-rcgIr5PmyQewiA6TOE0MbglIg";
 
-function parseRows(rows: any) {
+export function parseRows(rows: any) {
   let emojiSets: any = [];
   rows.forEach(
     ({

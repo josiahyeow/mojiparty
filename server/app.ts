@@ -6,6 +6,7 @@ import path from "path";
 import { Server, Socket } from "socket.io";
 import * as Rooms from "./actions/rooms";
 import { fetchEmojis } from "./data/emoji-set";
+import { fetchCustomEmojis } from "./data/custom-emoji-set";
 import { gameEvents } from "./events/game";
 import { helperEvents } from "./events/helper";
 import { lobbyEvents } from "./events/lobby";
@@ -28,7 +29,8 @@ const server = http.createServer(app);
 const fetchEmojisFromGoogleSheets = async () => {
   try {
     const emojis = await fetchEmojis();
-    Rooms.setEmojis(emojis);
+    const customEmojis = await fetchCustomEmojis();
+    Rooms.setEmojis({ ...emojis, ...customEmojis });
   } catch (e) {
     console.error(
       `Could not fetch emoji sets from Google Sheets. ${(e as Error).message}`

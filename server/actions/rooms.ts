@@ -42,6 +42,7 @@ export type EmojiSets = {
   brands: EmojiSet[];
   anime: EmojiSet[];
   koreaboo: EmojiSet[];
+  hariRaya: EmojiSet[];
 };
 
 export type Emojis = {
@@ -59,6 +60,7 @@ let emojis: Emojis = {
     brands: [],
     anime: [],
     koreaboo: [],
+    hariRaya: [],
   },
 };
 
