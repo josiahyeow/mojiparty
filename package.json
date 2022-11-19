@@ -20,8 +20,5 @@
   },
   "dependencies": {
     "kill-port": "^1.6.1"
-  },
-  "engines": {
-    "node": "18.12.1"
   }
 }
