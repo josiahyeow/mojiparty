@@ -11,7 +11,7 @@ const TwemojiSpan = styled.span`
   }
 `
 
-export default function emoji(emojis) {
+export default function emoji(emojis: string) {
   return (
     <TwemojiSpan
       dangerouslySetInnerHTML={{

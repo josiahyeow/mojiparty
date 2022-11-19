@@ -1,10 +1,10 @@
+import { fireEvent, waitFor } from '@testing-library/dom'
+import { act, render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { act, render } from '@testing-library/react'
-import { fireEvent, waitFor } from '@testing-library/dom'
-import userEvent from '@testing-library/user-event'
-import EnterRoom from './EnterRoom'
 import { create, roomExists } from '../../utils/api'
+import EnterRoom from './EnterRoom'
 
 jest.mock('../../utils/api')
 
@@ -46,9 +46,11 @@ describe('EnterRoom', () => {
 
   it('should create new room and join it', async () => {
     ;(create as jest.Mock).mockResolvedValue({ ok: true })
-    const { getByText, getByLabelText } = render(<EnterRoom />, {
-      wrapper: MemoryRouter,
-    })
+    const { getByText, getByLabelText } = render(
+      <MemoryRouter>
+        <EnterRoom />
+      </MemoryRouter>
+    )
 
     await userEvent.type(getByLabelText('Player'), 'foo')
     await userEvent.type(getByLabelText('Room'), 'bar')
@@ -60,9 +62,11 @@ describe('EnterRoom', () => {
 
   it('should join room', async () => {
     ;(roomExists as jest.Mock).mockResolvedValue({ ok: true })
-    const { getByText, getByLabelText } = render(<EnterRoom />, {
-      wrapper: MemoryRouter,
-    })
+    const { getByText, getByLabelText } = render(
+      <MemoryRouter>
+        <EnterRoom />
+      </MemoryRouter>
+    )
     await userEvent.type(getByLabelText('Player'), 'foo')
     await userEvent.type(getByLabelText('Room'), 'bar')
     fireEvent.click(getByText('Join Room'))
@@ -78,9 +82,11 @@ describe('EnterRoom', () => {
 
     it('should show error message when creating a room that already exists', async () => {
       ;(create as jest.Mock).mockResolvedValue({ ok: false })
-      const { getByText, getByLabelText } = render(<EnterRoom />, {
-        wrapper: MemoryRouter,
-      })
+      const { getByText, getByLabelText } = render(
+        <MemoryRouter>
+          <EnterRoom />
+        </MemoryRouter>
+      )
       await act(async () => {
         await userEvent.type(getByLabelText('Player'), 'foo')
         await userEvent.type(getByLabelText('Room'), 'bar')
@@ -95,9 +101,11 @@ describe('EnterRoom', () => {
 
     it('should show error message when room to join doesnt exists', async () => {
       ;(roomExists as jest.Mock).mockResolvedValue({ ok: false, status: 404 })
-      const { getByText, getByLabelText } = render(<EnterRoom />, {
-        wrapper: MemoryRouter,
-      })
+      const { getByText, getByLabelText } = render(
+        <MemoryRouter>
+          <EnterRoom />
+        </MemoryRouter>
+      )
       await act(async () => {
         await userEvent.type(getByLabelText('Player'), 'foo')
         await userEvent.type(getByLabelText('Room'), 'bar')

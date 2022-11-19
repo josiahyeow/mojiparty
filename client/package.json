@@ -25,11 +25,11 @@
     "react-ga": "^3.1.2",
     "react-modal": "^3.14.3",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.0",
+    "react-scripts": "^5.0.1",
     "server": "^0.0.1",
     "socket.io-client": "^4.2.0",
     "styled-components": "^5.1.1",
-    "twemoji": "^13.0.1",
+    "twemoji": "^14.0.2",
     "typescript": "~3.7.2"
   },
   "scripts": {
