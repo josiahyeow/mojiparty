@@ -1,8 +1,9 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import { decryptJSON } from "./crypto";
+import { googleServiceAccountCredentials } from "../config";
 import { parseRows } from "./emoji-set";
 
-import hash from "./hash.json";
+const GOOGLE_SERVICE_ACCOUNT_API_KEY = process.env
+  .GOOGLE_SERVICE_ACCOUNT_API_KEY!;
 
 const SPREADSHEET_ID = "1MiLw-zRq-Vc7d26BkB7l6YKIpYAZdCYKaJ13l_lAhUk";
 
@@ -28,7 +29,9 @@ export function parseIndexRows(rows: any) {
 async function fetchCustomEmojis() {
   try {
     const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
-    await doc.useServiceAccountAuth(decryptJSON(hash));
+    await doc.useServiceAccountAuth(
+      googleServiceAccountCredentials(GOOGLE_SERVICE_ACCOUNT_API_KEY)
+    );
     await doc.loadInfo();
 
     const index = parseIndexRows(await doc.sheetsByIndex[0].getRows());
