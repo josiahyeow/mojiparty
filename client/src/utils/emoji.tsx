@@ -18,6 +18,7 @@ export default function emoji(emojis: string) {
         __html: twemoji.parse(emojis, {
           folder: 'svg',
           ext: '.svg',
+          base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/',
         }),
       }}
     />
